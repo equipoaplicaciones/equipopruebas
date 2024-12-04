@@ -5,6 +5,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -31,11 +33,18 @@ public class MainActivity extends AppCompatActivity {
 
                 String userData = "Nombre: " + name + "\nCorreo: " + email;
                 tvUserData.setText(userData);
+
+                mensaje();
             }
         });
+
     }
     //Primer Commit de Kevin
-    //Commit de Axel
-}
+
+    public void mensaje () {
+        Toast.makeText(getApplicationContext(), "Este es un mensaje para probar los cambios.", Toast.LENGTH_SHORT).show();
+    }
+    }
+
 
 
