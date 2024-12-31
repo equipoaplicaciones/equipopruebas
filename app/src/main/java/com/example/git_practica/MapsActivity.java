@@ -1,170 +1,175 @@
 package com.example.git_practica;
 
-import android.os.Bundle;
-import androidx.fragment.app.FragmentActivity;
-import androidx.core.app.ActivityCompat;
-import android.Manifest;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.location.Location;
+import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.maps.OnMapReadyCallback;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.maps.android.PolyUtil;
+import com.google.android.gms.maps.model.MapStyleOptions;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private FusedLocationProviderClient fusedLocationClient;
-    private static final String API_KEY = "AIzaSyADzVi_xdbhcFjfgKcABzB6iq4qB98UOgs";
-    private static final String BASE_URL = "https://maps.googleapis.com/maps/api/directions/";
+    private LatLng userLocation; // Usaremos esta variable para la ubicación del usuario
+    private FusedLocationProviderClient fusedLocationClient; // Cliente de ubicación
+    private final LatLng CONSULTORIO_LOCATION = new LatLng(19.24274689333512, -98.844869040542); // Ubicación del consultorio
+    private final String API_KEY = "AIzaSyADzVi_xdbhcFjfgKcABzB6iq4qB98UOgs"; // Reemplaza con tu clave de API
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this); // Inicializa el cliente
 
-        // Verificar si el permiso de ubicación ha sido concedido
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Si no se tiene permiso, solicitarlo
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-        } else {
-            // Si ya tiene permiso, inicializar el mapa
-            initializeMap();
-        }
-
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        // Configurar el fragmento del mapa
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 1) {
-            // Si el permiso es concedido
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                initializeMap(); // Proceder con la inicialización del mapa
-            } else {
-                Toast.makeText(this, "Permiso de ubicación necesario para mostrar el mapa", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    private void initializeMap() {
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        if (mapFragment != null) {
-            mapFragment.getMapAsync(this);  // Se asegura de que se obtiene la referencia del mapa
-        }
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
-        Log.d("MapsActivity", "Mapa listo.");
 
-        // Verificar que el permiso de ubicación ha sido otorgado
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        // Habilitar los controles de zoom
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+
+        // Intentar obtener la ubicación actual del usuario
+        getUserLocation();
+    }
+
+    // Método para obtener la ubicación actual del usuario
+    private void getUserLocation() {
+        // Verificar si tenemos permisos para acceder a la ubicación
+        if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(this, location -> {
-                        if (location != null) {
-                            LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 15));
-                            mMap.addMarker(new MarkerOptions().position(userLocation).title("Mi Ubicación"));
-                            // Llamar a la API de Directions
-                            getDirections(userLocation, new LatLng(19.24274689333512, -98.844869040542));
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (location != null) {
+                                // Obtener la latitud y longitud de la ubicación actual
+                                userLocation = new LatLng(location.getLatitude(), location.getLongitude());
+
+                                // Mover la cámara del mapa a la ubicación actual
+                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 12));
+
+                                // Agregar un marcador en la ubicación del usuario con un ícono personalizado
+                                mMap.addMarker(new MarkerOptions()
+                                        .position(userLocation)
+                                        .title("Mi ubicación")
+                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_user_location))); // Icono del usuario
+
+                                // Obtener y trazar la ruta hacia el consultorio
+                                getRoute();
+                            }
                         }
-                    })
-                    .addOnFailureListener(e -> Log.e("MapsActivity", "Error al obtener ubicación", e));
+                    });
+        } else {
+            // Si no tenemos permisos, pedirlos
+            requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
     }
 
-    private void getDirections(LatLng origin, LatLng destination) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+    // Método para obtener y trazar la ruta (igual que antes)
+    private void getRoute() {
+        // Construir la URL para la API Directions
+        String origin = userLocation.latitude + "," + userLocation.longitude;
+        String destination = CONSULTORIO_LOCATION.latitude + "," + CONSULTORIO_LOCATION.longitude;
 
-        DirectionsAPI directionsAPI = retrofit.create(DirectionsAPI.class);
+        String url = "https://maps.googleapis.com/maps/api/directions/json?" +
+                "origin=" + origin +
+                "&destination=" + destination +
+                "&mode=driving" +
+                "&key=" + API_KEY;
 
-        String originStr = origin.latitude + "," + origin.longitude;
-        String destStr = destination.latitude + "," + destination.longitude;
-
-        Call<DirectionsResponse> call = directionsAPI.getDirections(originStr, destStr, API_KEY);
-        call.enqueue(new Callback<DirectionsResponse>() {
-            @Override
-            public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
-                if (response.isSuccessful()) {
-                    DirectionsResponse directionsResponse = response.body();
-                    Log.d("MapsActivity", "Respuesta exitosa: " + directionsResponse);
-                    if (directionsResponse != null && directionsResponse.routes != null) {
-                        List<LatLng> path = decodePolyline(directionsResponse.routes.get(0).legs.get(0).steps.get(0).polyline);
-                        mMap.addPolyline(new PolylineOptions().addAll(path).color(0xFF0000FF).width(10));
-                    } else {
-                        Log.e("MapsActivity", "No se encontraron rutas en la respuesta.");
+        // Crear una solicitud con Volley
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            parseRouteAndDraw(response);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
-                } else {
-                    Toast.makeText(MapsActivity.this, "Error al obtener la ruta", Toast.LENGTH_SHORT).show();
-                    Log.e("MapsActivity", "Error al obtener la respuesta: " + response.errorBody());
-                }
-            }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                });
 
-            @Override
-            public void onFailure(Call<DirectionsResponse> call, Throwable t) {
-                Toast.makeText(MapsActivity.this, "Error en la conexión", Toast.LENGTH_SHORT).show();
-            }
-        });
+        // Agregar la solicitud a la cola
+        requestQueue.add(stringRequest);
     }
 
-    public List<LatLng> decodePolyline(String encoded) {
-        List<LatLng> polyline = new ArrayList<>();
-        int index = 0, len = encoded.length();
-        int lat = 0, lng = 0;
+    // Método para trazar la ruta (igual que antes)
+    private void parseRouteAndDraw(String jsonResponse) throws JSONException {
+        JSONObject jsonObject = new JSONObject(jsonResponse);
+        JSONArray routes = jsonObject.getJSONArray("routes");
 
-        while (index < len) {
-            int b, shift = 0, result = 0;
-            do {
-                b = encoded.charAt(index++) - 63;
-                result |= (b & 0x1f) << shift;
-                shift += 5;
-            } while (b >= 0x20);
-            int dlat = (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
-            lat += dlat;
+        if (routes.length() > 0) {
+            JSONObject route = routes.getJSONObject(0);
+            JSONObject overviewPolyline = route.getJSONObject("overview_polyline");
+            String points = overviewPolyline.getString("points");
 
-            shift = 0;
-            result = 0;
-            do {
-                b = encoded.charAt(index++) - 63;
-                result |= (b & 0x1f) << shift;
-                shift += 5;
-            } while (b >= 0x20);
-            int dlng = (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
-            lng += dlng;
+            // Decodificar la polilínea
+            List<LatLng> decodedPath = PolyUtil.decode(points);
 
-            LatLng point = new LatLng(lat / 1E5, lng / 1E5);
-            polyline.add(point);
+            // Dibujar la ruta en el mapa
+            mMap.addPolyline(new PolylineOptions()
+                    .addAll(decodedPath)
+                    .color(ContextCompat.getColor(this, R.color.black))
+                    .width(10f));
         }
-        return polyline;
+
+        // Agregar marcador para el consultorio con un ícono personalizado
+        mMap.addMarker(new MarkerOptions()
+                .position(CONSULTORIO_LOCATION)
+                .title("Consultorio Dental")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_dental_office))); // Icono del consultorio
     }
 }

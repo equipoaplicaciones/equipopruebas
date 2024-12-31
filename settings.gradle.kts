@@ -1,27 +1,19 @@
 pluginManagement {
     repositories {
-        google {
-            content {
-                includeGroupByRegex("com\\.android.*")
-                includeGroupByRegex("com\\.google.*")
-                includeGroupByRegex("androidx.*")
-
-
-            }
-        }
         google()
         mavenCentral()
-        gradlePluginPortal()
+        jcenter()  // Incluir JCenter para resolver las dependencias
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
+        jcenter()  // Asegúrate de incluir JCenter aquí también
     }
 }
 
 rootProject.name = "Git_Practica"
 include(":app")
- 
