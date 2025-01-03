@@ -46,6 +46,15 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, MapsActivity.class);
             startActivity(intent);
         });
+
+        // Configurar el ImageButton para abrir AgendarCitaActivity
+        ImageButton imageButton1 = findViewById(R.id.imageButton12);
+        imageButton1.setOnClickListener(view -> {
+            // Crear un Intent para abrir AgendarCitaActivity
+            Intent intent = new Intent(MainActivity.this, AgendarActivity.class);
+            startActivity(intent);
+        });
+
     }
 
     private void signIn(String email, String password) {
