@@ -44,7 +44,7 @@ public class VolleyHelper {
                             com.android.volley.Response.Listener<JSONObject> listener,
                             com.android.volley.Response.ErrorListener errorListener) {
 
-        String url = "http://192.168.100.110:5000/api/citas";
+        String url = "http://10.0.2.2:5001/api/citas";
 
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
