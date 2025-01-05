@@ -11,7 +11,6 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -40,43 +39,36 @@ public class VolleyHelper {
         return requestQueue;
     }
 
-    public void agendarCita(String nombre, String fecha, String descripcion,
+    public void agendarCita(String nombre, Date fecha, String hora, String descripcion,
                             com.android.volley.Response.Listener<JSONObject> listener,
                             com.android.volley.Response.ErrorListener errorListener) {
 
-        String url = "http://10.0.2.2:5001/api/citas";
+        String url = "http://192.168.100.110:5000/api/citas";
 
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            Date date = sdf.parse(fecha);
-            String fechaFormateada = sdf.format(date);
+            // Convertir la fecha a un formato ISO 8601
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault());
+            String fechaFormateada = sdf.format(fecha);
+
+            // Crear el JSON con los datos
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("nombre", nombre);
-            jsonObject.put("fecha", fechaFormateada);
+            jsonObject.put("fecha", fechaFormateada); // Usar la fecha formateada
+            jsonObject.put("hora", hora); // Hora adicional
             jsonObject.put("descripcion", descripcion);
 
+            Log.d("VolleyHelper", "JSON enviado: " + jsonObject.toString());
+
+            // Crear la solicitud de tipo POST
             JsonObjectRequest request = new JsonObjectRequest(
                     Request.Method.POST,
                     url,
                     jsonObject,
                     listener,
-                    error -> {
-                        String errorMessage = "Error en la conexión con el servidor";
-
-                        if (error.networkResponse != null) {
-                            int statusCode = error.networkResponse.statusCode;
-                            errorMessage = "Código de error HTTP: " + statusCode;
-                        } else if (error.getCause() != null) {
-                            errorMessage = "Error: " + error.getCause().getMessage();
-                        }
-
-                        Toast.makeText(ctx, errorMessage, Toast.LENGTH_SHORT).show();
-
-                        Log.e("VolleyError", "Error al conectar con el servidor", error);
-                        error.printStackTrace();
-                    }
+                    errorListener
             );
 
+            // Añadir la solicitud a la cola
             getRequestQueue().add(request);
 
         } catch (Exception e) {
@@ -84,4 +76,7 @@ public class VolleyHelper {
             e.printStackTrace();
         }
     }
+
+
+
 }

@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Configurar el ImageButton para abrir AgendarCitaActivity
         ImageButton imageButton1 = findViewById(R.id.imageButton12);
         imageButton1.setOnClickListener(view -> {
             // Crear un Intent para abrir AgendarCitaActivity
