@@ -5,17 +5,24 @@ const rutas = require('./routes/rutas');
 const cors = require('cors');
 
 const app = express();
-const PORT = 5001;
+const PORT = process.env.PORT || 5001;
 
 app.use(express.json());
 app.use(cors());
 
-mongoose.connect('mongodb+srv://kev:qwerty123@kevin.joqkehr.mongodb.net/?retryWrites=true&w=majority&appName=Kevin', { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log("Conectado a MongoDB Atlas"))
-    .catch(err => console.log("Error al conectar a MongoDB Atlas: ", err));
+// Conexión a MongoDB Atlas
+mongoose.connect('mongodb+srv://kevinleyva:tescha@kevin.joqkehr.mongodb.net/miBaseDeDatos', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+.then(() => {
+    console.log('Conectado a MongoDB Atlas');
+})
+.catch((error) => {
+    console.error('Error al conectar a MongoDB Atlas:', error);
+});
 
-
-
+// Ruta de prueba para ver si el servidor está funcionando
 app.get('/', (req, res) => {
     res.send('¡Servidor Conectado a MongoDB Atlas!');
 });

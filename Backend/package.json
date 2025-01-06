@@ -1,11 +1,19 @@
 {
   "dependencies": {
+<<<<<<< HEAD
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
+=======
+    "bcryptjs": "^2.4.3",
+>>>>>>> a7ca774 (Resuelto conflicto 1)
     "cors": "^2.8.5",
+    "dayjs": "^1.11.13",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+<<<<<<< HEAD
     "firebase-admin": "^13.0.2",
+=======
+>>>>>>> a7ca774 (Resuelto conflicto 1)
     "mongoose": "^8.9.3"
   }
 }

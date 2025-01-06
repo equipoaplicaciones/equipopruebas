@@ -1,31 +1,46 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@color/white"
+    tools:context=".MainActivity">
 
     <!-- Título de la actividad -->
     <TextView
         android:id="@+id/textViewUsuario"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Citas del Usuario"
-        android:textSize="20sp"
-        android:layout_marginBottom="20dp"
-        android:textStyle="bold"/>
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:layout_marginBottom="16dp" />
 
     <!-- RecyclerView para mostrar las citas -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewCitas"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:background="@drawable/ic_dental_office"
+        android:padding="8dp"
+        android:clipToPadding="false"
+        android:scrollbars="vertical" />
 
     <!-- Botón para agendar una cita -->
     <Button
         android:id="@+id/btnAgendarCita"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/black"
         android:text="Agendar Cita"
-        android:layout_marginTop="20dp"/>
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:elevation="4dp"
+        android:padding="12dp" />
 </LinearLayout>
