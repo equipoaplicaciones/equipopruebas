@@ -11,14 +11,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class HistorialCitasActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private CitasAdapter citasAdapter;
-    private List<Map<String, String>> citasList = new ArrayList<>();
+    private List<Cita> citasList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +25,8 @@ public class HistorialCitasActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // Usar la lista de objetos Cita
         citasAdapter = new CitasAdapter(citasList);
         recyclerView.setAdapter(citasAdapter);
 
@@ -34,7 +34,6 @@ public class HistorialCitasActivity extends AppCompatActivity {
     }
 
     private void obtenerHistorialCitas() {
-
         VolleyHelper volleyHelper = VolleyHelper.getInstance(this);
 
         volleyHelper.obtenerHistorialCitas(new Response.Listener<JSONArray>() {
@@ -43,20 +42,22 @@ public class HistorialCitasActivity extends AppCompatActivity {
                 try {
                     citasList.clear();  // Limpiar la lista antes de agregar los nuevos datos
 
+                    // Convertir cada objeto JSON a una instancia de Cita
                     for (int i = 0; i < response.length(); i++) {
                         JSONObject cita = response.getJSONObject(i);
 
-                        // Crear un mapa para cada cita
-                        Map<String, String> citaData = new HashMap<>();
-                        citaData.put("nombre", cita.getString("nombre"));
-                        citaData.put("fecha", cita.getString("fecha"));
-                        citaData.put("hora", cita.getString("hora"));
-                        citaData.put("descripcion", cita.getString("descripcion"));
+                        // Crear una nueva instancia de Cita con los datos del JSON
+                        Cita nuevaCita = new Cita(
+                                cita.getString("nombre"),
+                                cita.getString("fecha"),
+                                cita.getString("hora"),
+                                cita.getString("descripcion")
+                        );
 
-                        citasList.add(citaData);
+                        citasList.add(nuevaCita);  // Agregar la cita a la lista
                     }
 
-                    citasAdapter.notifyDataSetChanged();
+                    citasAdapter.notifyDataSetChanged();  // Notificar al adaptador que los datos han cambiado
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

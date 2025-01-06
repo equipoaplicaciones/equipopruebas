@@ -82,7 +82,7 @@ public class VolleyHelper {
     public void obtenerHistorialCitas(com.android.volley.Response.Listener<JSONArray> listener,
                                       com.android.volley.Response.ErrorListener errorListener) {
 
-        String url = "http://192.168.100.110:5000/api/citas"; // Ajusta esta URL según tu configuración
+        String url = "http://10.0.2.2:5001/api/citas"; // URL para el emulador de Android
 
         // Crear la solicitud de tipo GET
         JsonArrayRequest request = new JsonArrayRequest(

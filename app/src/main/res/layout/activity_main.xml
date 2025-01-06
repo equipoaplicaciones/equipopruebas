@@ -97,7 +97,7 @@
 
             <!-- Botón de registrarse -->
             <Button
-                android:id="@+id/button9"
+                android:id="@+id/btnRegistro"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

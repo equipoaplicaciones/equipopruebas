@@ -131,7 +131,7 @@ public class AgendarActivity extends AppCompatActivity {
                 return;
             }
 
-            String url = "http://192.168.100.110:5000/api/citas"; // Reemplaza con tu URL correcta
+            String url = "http://10.0.2.2:5001/api/citas"; // URL para el emulador de Android
 
             JsonObjectRequest request = new JsonObjectRequest(
                     Request.Method.POST,
