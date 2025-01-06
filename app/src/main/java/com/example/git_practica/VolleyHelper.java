@@ -6,9 +6,11 @@ import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
@@ -77,6 +79,22 @@ public class VolleyHelper {
         }
     }
 
+    public void obtenerHistorialCitas(com.android.volley.Response.Listener<JSONArray> listener,
+                                      com.android.volley.Response.ErrorListener errorListener) {
 
+        String url = "http://192.168.100.110:5000/api/citas"; // Ajusta esta URL según tu configuración
+
+        // Crear la solicitud de tipo GET
+        JsonArrayRequest request = new JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null,  // No es necesario enviar un cuerpo en la solicitud GET
+                listener,
+                errorListener
+        );
+
+        // Añadir la solicitud a la cola
+        getRequestQueue().add(request);
+    }
 
 }

@@ -35,6 +35,8 @@
             android:label="Map" android:exported="true" />
 
         <activity android:name=".AgendarActivity" />
+        <activity android:name=".HistorialCitasActivity"></activity>
+
 
     </application>
 
