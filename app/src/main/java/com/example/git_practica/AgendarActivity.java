@@ -1,37 +1,25 @@
 package com.example.git_practica;
-
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import android.view.View;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AgendarActivity extends AppCompatActivity {
     private EditText etNombre, etFecha, etHora, etDescripcion;
@@ -52,6 +40,7 @@ public class AgendarActivity extends AppCompatActivity {
         etDescripcion = findViewById(R.id.etDescripcion);
 
         btnAgendarCita = findViewById(R.id.btnAgendarCita);
+        btnVerHistorial = findViewById(R.id.btnVerHistorial);
 
         // Listener para el campo de fecha
         etFecha.setOnClickListener(v -> {
@@ -94,7 +83,6 @@ public class AgendarActivity extends AppCompatActivity {
                     },
                     hour, minute, true
             );
-
             timePickerDialog.show();
         });
 
@@ -109,33 +97,27 @@ public class AgendarActivity extends AppCompatActivity {
                 return;
             }
 
-            JSONObject nuevaCita = new JSONObject();
-            try {
-                nuevaCita.put("nombre", nombre);
-                nuevaCita.put("fecha", fecha);
-                nuevaCita.put("hora", hora);
-                nuevaCita.put("descripcion", descripcion);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                Toast.makeText(AgendarActivity.this, "Error al crear la cita.", Toast.LENGTH_SHORT).show();
-                return;
-            }
+            // Crear una nueva cita
+            Cita nuevaCita = new Cita(nombre, fecha, hora, descripcion);
 
-            String url = "http://10.0.2.2:5001/api/citas";
-
-            JsonObjectRequest request = new JsonObjectRequest(
-                    Request.Method.POST,
-                    url,
-                    nuevaCita,
-                    response -> Toast.makeText(AgendarActivity.this, "Cita agendada con éxito.", Toast.LENGTH_SHORT).show(),
-                    error -> {
+            // Usar Retrofit para agendar la cita
+            RetrofitHelper.getInstance(this).getApiService().agendarCita(nuevaCita).enqueue(new Callback<Cita>() {
+                @Override
+                public void onResponse(Call<Cita> call, Response<Cita> response) {
+                    if (response.isSuccessful()) {
+                        Toast.makeText(AgendarActivity.this, "Cita agendada con éxito.", Toast.LENGTH_SHORT).show();
+                    } else {
                         Toast.makeText(AgendarActivity.this, "Error al agendar la cita.", Toast.LENGTH_SHORT).show();
-                        Log.e("VolleyError", error.toString());
+                        Log.e("RetrofitError", "Error al agendar cita: " + response.message());
                     }
-            );
+                }
 
-            RequestQueue requestQueue = Volley.newRequestQueue(this);
-            requestQueue.add(request);
+                @Override
+                public void onFailure(Call<Cita> call, Throwable t) {
+                    Toast.makeText(AgendarActivity.this, "Error de conexión.", Toast.LENGTH_SHORT).show();
+                    Log.e("RetrofitError", "Fallo la conexión: " + t.getMessage());
+                }
+            });
         });
 
         // Listener para ver historial
@@ -149,36 +131,30 @@ public class AgendarActivity extends AppCompatActivity {
     }
 
     private void obtenerCitasAgendadas() {
-        String url = "http://10.0.2.2:5001/api/citas";
+        RetrofitHelper.getInstance(this).getApiService().obtenerHistorialCitas().enqueue(new Callback<List<Cita>>() {
+            @Override
+            public void onResponse(Call<List<Cita>> call, Response<List<Cita>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Cita> citas = response.body();
+                    for (Cita cita : citas) {
+                        String fecha = cita.getFecha();
+                        String hora = cita.getHora();
 
-        JsonObjectRequest request = new JsonObjectRequest(
-                Request.Method.GET,
-                url,
-                null,
-                response -> {
-                    try {
-                        JSONArray citasArray = response.getJSONArray("citas");
-                        for (int i = 0; i < citasArray.length(); i++) {
-                            JSONObject cita = citasArray.getJSONObject(i);
-                            String fecha = cita.getString("fecha");
-                            String hora = cita.getString("hora");
-
-                            citasPorFecha.putIfAbsent(fecha, new ArrayList<>());
-                            citasPorFecha.get(fecha).add(hora);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Toast.makeText(this, "Error procesando las citas", Toast.LENGTH_SHORT).show();
+                        citasPorFecha.putIfAbsent(fecha, new ArrayList<>());
+                        citasPorFecha.get(fecha).add(hora);
                     }
-                },
-                error -> {
-                    Toast.makeText(this, "Error al obtener las citas", Toast.LENGTH_SHORT).show();
-                    Log.e("VolleyError", error.toString());
+                } else {
+                    Toast.makeText(AgendarActivity.this, "Error al obtener el historial de citas.", Toast.LENGTH_SHORT).show();
+                    Log.e("RetrofitError", "Error al obtener citas: " + response.message());
                 }
-        );
+            }
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(request);
+            @Override
+            public void onFailure(Call<List<Cita>> call, Throwable t) {
+                Toast.makeText(AgendarActivity.this, "Error de conexión.", Toast.LENGTH_SHORT).show();
+                Log.e("RetrofitError", "Fallo la conexión: " + t.getMessage());
+            }
+        });
     }
 
     private boolean isHoraOcupada(String fecha, String horaSeleccionada) {
