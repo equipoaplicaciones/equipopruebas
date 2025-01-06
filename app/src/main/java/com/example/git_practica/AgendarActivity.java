@@ -47,7 +47,7 @@ public class AgendarActivity extends AppCompatActivity {
         etNombre = findViewById(R.id.etNombre);
         etFecha = findViewById(R.id.etFecha);
         etDescripcion = findViewById(R.id.etDescripcion);
-        etHora = findViewById(R.id.etHora);  // Añadir esta línea
+        etHora = findViewById(R.id.etHora);
         btnAgendarCita = findViewById(R.id.btnAgendarCita);
 
         etFecha.setOnClickListener(v -> {
@@ -95,7 +95,6 @@ public class AgendarActivity extends AppCompatActivity {
             timePickerDialog.show();
         });
 
-        // Manejo de clic en botón para agendar
         btnAgendarCita.setOnClickListener(view -> {
             String nombre = etNombre.getText().toString();
             String fecha = etFecha.getText().toString();
@@ -131,7 +130,7 @@ public class AgendarActivity extends AppCompatActivity {
                 return;
             }
 
-            String url = "http://10.0.2.2:5001/api/citas"; // URL para el emulador de Android
+            String url = "http://192.168.100.110:5000/api/citas";
 
             JsonObjectRequest request = new JsonObjectRequest(
                     Request.Method.POST,

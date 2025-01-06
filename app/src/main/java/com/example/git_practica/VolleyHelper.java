@@ -79,16 +79,16 @@ public class VolleyHelper {
         }
     }
 
-    public void obtenerHistorialCitas(com.android.volley.Response.Listener<JSONArray> listener,
+    public void obtenerHistorialCitas(com.android.volley.Response.Listener<JSONObject> listener,
                                       com.android.volley.Response.ErrorListener errorListener) {
 
-        String url = "http://10.0.2.2:5001/api/citas"; // URL para el emulador de Android
+        String url = "http://192.168.100.110:5000/api/citas";
 
         // Crear la solicitud de tipo GET
-        JsonArrayRequest request = new JsonArrayRequest(
+        JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,
                 url,
-                null,  // No es necesario enviar un cuerpo en la solicitud GET
+                null,  // No se necesita enviar un cuerpo en la solicitud GET
                 listener,
                 errorListener
         );
@@ -96,5 +96,6 @@ public class VolleyHelper {
         // Añadir la solicitud a la cola
         getRequestQueue().add(request);
     }
+
 
 }

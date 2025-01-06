@@ -2,9 +2,11 @@ package com.example.git_practica;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -58,9 +60,14 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Agregar la funcionalidad para recordar la contraseña si es necesario
         checkBoxRecordar.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            // Aquí podrías agregar lógica para guardar el estado de "Recordar Contraseña" en SharedPreferences si es necesario
+        });
+
+        // Configurar el ImageButton para redirigir a AgendarActivity
+        ImageButton imageButton = findViewById(R.id.imageButton12);
+        imageButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, AgendarActivity.class);
+            startActivity(intent); // Iniciar la nueva actividad
         });
     }
 

@@ -36,15 +36,18 @@ public class HistorialCitasActivity extends AppCompatActivity {
     private void obtenerHistorialCitas() {
         VolleyHelper volleyHelper = VolleyHelper.getInstance(this);
 
-        volleyHelper.obtenerHistorialCitas(new Response.Listener<JSONArray>() {
+        volleyHelper.obtenerHistorialCitas(new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(JSONArray response) {
+            public void onResponse(JSONObject response) {
                 try {
                     citasList.clear();  // Limpiar la lista antes de agregar los nuevos datos
 
+                    // Obtener el JSONArray dentro de la clave "citas"
+                    JSONArray citasArray = response.getJSONArray("citas");
+
                     // Convertir cada objeto JSON a una instancia de Cita
-                    for (int i = 0; i < response.length(); i++) {
-                        JSONObject cita = response.getJSONObject(i);
+                    for (int i = 0; i < citasArray.length(); i++) {
+                        JSONObject cita = citasArray.getJSONObject(i);
 
                         // Crear una nueva instancia de Cita con los datos del JSON
                         Cita nuevaCita = new Cita(
@@ -69,4 +72,5 @@ public class HistorialCitasActivity extends AppCompatActivity {
             }
         });
     }
+
 }
