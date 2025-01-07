@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "citasdentista-24f6c",
+  "private_key_id": "b11bf109e0517139566d347405b3a51829ebef2b",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC7U8Hq46FlgHm6\nRqVZCPFFTCkU7XPe4hR7DPWDe/L0bwteWxGvYOGLMLDwtYqm37bcq9Q58OGTvA+y\nrKYM9iZIwKRWrjKhmObvA15ZVvDSYbFD84bgMHpnPX9HKabwilBUSRSH4XpF1tX6\n8wzKa7H8iF4Bs85D//1DjTlkDPhCn1xOUNO7/tWS14XiNzfo0JuzO+43cr3lFrqA\nVTbISymQ0QbCHyHpwUZUOcUoFMwlH6KVTnHtCHbQPMpOufySqvfQK9YAfrj3T0Z6\njKfKgprCmonsBNLWYip04oKm5WVZeG6iptIeK/ALXUqiWrt6n+hm3fvuc/cNfM16\nQRituxo1AgMBAAECggEAO1/6bH2XCAmXS7Qdr6FWe/z+Xnw/CEvHaxM59GGCqfhS\ndadO7TQ7ePdHdhxMpMTu/HXYMD9J+J4YqazwetZAXzn0POc89Bx3QhXiv1V/wmcl\nnSCgxQmImpWS9Jbeq4pjmLuLLuCIdX95Vm/YQ4asJRuCFG8N9165w0INiUlVHSRD\nJZdB8mXDdDtAWYSuw6rw3i7FDJTqASRLmDhis6j9tvn7H12GrM021g6dwnhpr+Su\nqDQBNAcxZC3vTDdFJnaeTEcDncGUuysjPaXmP0JDYOqcNmyDhSrRuJ2LkkRX+gIo\naSH3Am3gYqWDK/pI3/5ocp1JcUNh+xClxKN8XvJhhwKBgQD0EMwEEMERAhptyzBB\nZ+Nk3MI72UaP/DNfj+fJqbq/9RuWWXmgBRtm/wqNnGQdSakn/kGCkP+YWtO6NMx6\nRmJwYTArfTKu45CQO/c4y//gaZzWI4CXATNMFrhk4BLgimZiRDAMC9f/Gtl6KKDV\nN0Gr7zVWHwf/FdBIt7yG4V6VjwKBgQDEfLYR2Mgvv0WASsZ0p15nRpQtmnfXZQez\nsK6PObe3G6dpxjIw/QH2ML41UfM+MZvst7zneMTwrmR6iRhvYLaSpk7JWBrtrfmg\nuSgHV2KMXVduf1V7viIPKMemyncSYepRGKZtxxdjuY6uIPBEv2r5SG4tBB13zgkl\n0YgQMaSZ+wKBgA7v9DyPdfF/inSLygFGxXEH3c9h5eKsEczYdtwtyiMzciPKiBoW\nFe5Az7mJB8uPFY5ADmxaSXpenLS5xIX7Rs0P9a3DtNVlUhSxxtiwC5IFhLbKZ3VW\neng+r7xkxmL9tXRwLeye0PJpB0Rltio2fotyUXZa4ddn016P+DbdFjfbAoGBALbt\nPDyFTGpXcocsFnMIVvVjWhTS2HupzW/XL8yb+ZP5pPTu1k+RXUAsxQizEPh4Cyhp\nLu95GjDQyy7hb+RRb+g7+OGuqvNYoyyk9MVQ76iqRfnThmw76U2fs7BukkiE7Dcv\n8dIGJppraJBojggTBa6rZhd221Bse0vANSKOdSX9AoGBAM8eqGwvFerXLroxZFhe\nnRq5q9DU1aQMag14ACCzTzhOH7nkCrfYbrN0xyoyw7Cks8DGKt0d0wneUcVrey04\nrc4MY89WLnBV0RRZcSBYcAnpoQqyi27amNW20jtDjzbV0LK4XSRk/tXquZTBvifb\n9WM0eEcPiHEdjn5oULty0vTu\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-qiudy@citasdentista-24f6c.iam.gserviceaccount.com",
+  "client_id": "116605373955689939980",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-qiudy%40citasdentista-24f6c.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
