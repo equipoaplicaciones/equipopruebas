@@ -1,73 +1,120 @@
 package com.example.git_practica;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 public class interfazusuario extends AppCompatActivity {
+
+    private RecyclerView recyclerViewCitas;
+    private CitasAdapter citasAdapter;
+    private List<Cita> citasList = new ArrayList<>();
+    private Button btnAgendarCita;
+    private BroadcastReceiver citaReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_interfazusuario);
 
-        // Obtener el ID de MongoDB pasado en el Intent
-        String mongodbUserId = getIntent().getStringExtra("MONGO_ID");
+        recyclerViewCitas = findViewById(R.id.recyclerViewCitas);
+        btnAgendarCita = findViewById(R.id.btnAgendarCita);
 
+        recyclerViewCitas.setLayoutManager(new LinearLayoutManager(this));
+
+        String mongodbUserId = getMongodbUserIdFromPreferences();
         if (mongodbUserId != null) {
-            // Llamar al método para obtener las citas del usuario
-            obtenerCitasDeUsuario(mongodbUserId);
+            obtenerCitasUsuario(mongodbUserId);
+        } else {
+            Toast.makeText(this, "No se pudo obtener el ID de MongoDB", Toast.LENGTH_SHORT).show();
         }
+
+        btnAgendarCita.setOnClickListener(v -> {
+            Intent intent = new Intent(interfazusuario.this, AgendarCitaActivity.class);
+            startActivity(intent);
+        });
+
+        // Registrar el BroadcastReceiver para actualizar la lista de citas
+        citaReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String userId = getMongodbUserIdFromPreferences();
+                if (userId != null) {
+                    obtenerCitasUsuario(userId);  // Recargar las citas
+                }
+            }
+        };
+        LocalBroadcastManager.getInstance(this).registerReceiver(citaReceiver, new IntentFilter("CITA_AGREGADA"));
     }
 
-    private void obtenerCitasDeUsuario(String mongodbUserId) {
-        // URL del endpoint que devuelve las citas del usuario usando su MongoDB ID
-        String url = "http://10.0.2.2:5001/api/usuario/" + mongodbUserId + "/citas";  // Corregido
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Desregistrar el BroadcastReceiver
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(citaReceiver);
+    }
 
-        // Crear la solicitud GET usando Volley
-        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        try {
-                            // Procesar las citas recibidas
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject cita = response.getJSONObject(i);
-                                String nombre = cita.getString("nombre");
-                                String fecha = cita.getString("fecha");
-                                String descripcion = cita.getString("descripcion");
+    private String getMongodbUserIdFromPreferences() {
+        SharedPreferences sharedPreferences = getSharedPreferences("UsuarioPrefs", MODE_PRIVATE);
+        return sharedPreferences.getString("MONGO_ID", null);
+    }
 
-                                // Aquí puedes agregar las citas a un adaptador y luego mostrarlas en un RecyclerView
-                                // Ejemplo de cómo agregar las citas a una lista:
-                                // citasList.add(new Cita(nombre, fecha, descripcion));
+    private void obtenerCitasUsuario(String userId) {
+        String url = "http://10.0.2.2:5001/api/usuario/" + userId + "/citas";
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                response -> {
+                    try {
+                        if (response.has("citas")) {
+                            JSONArray citasArray = response.getJSONArray("citas");
+                            citasList.clear();
+                            for (int i = 0; i < citasArray.length(); i++) {
+                                JSONObject citaObject = citasArray.getJSONObject(i);
+                                String nombre = citaObject.getString("nombre");
+                                String fecha = citaObject.getString("fecha");
+                                String hora = citaObject.getString("hora");
+                                String descripcion = citaObject.getString("descripcion");
+                                Cita cita = new Cita(nombre, fecha, hora, descripcion);
+                                citasList.add(cita);
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            citasAdapter = new CitasAdapter(citasList);
+                            recyclerViewCitas.setAdapter(citasAdapter);
+                        } else {
+                            Toast.makeText(this, "No se encontraron citas", Toast.LENGTH_SHORT).show();
                         }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Mostrar mensaje de error si no se obtienen las citas
-                        Toast.makeText(interfazusuario.this, "Error al obtener las citas", Toast.LENGTH_SHORT).show();
-                        error.printStackTrace();
-                    }
-                }
-        );
+                error -> {
+                    Toast.makeText(this, "Error al obtener las citas", Toast.LENGTH_SHORT).show();
+                });
 
-        // Agregar la solicitud a la cola de Volley
         Volley.newRequestQueue(this).add(request);
     }
 }
+
+

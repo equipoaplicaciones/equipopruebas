@@ -3,31 +3,42 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="10dp"
-    android:layout_marginBottom="10dp"
-    android:background="@android:color/white">
+    android:layout_marginBottom="8dp"
+    android:background="?android:attr/selectableItemBackground">
 
+    <!-- Nombre de la cita -->
     <TextView
         android:id="@+id/textViewNombre"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Nombre de la cita" />
+        android:text="Nombre de la cita"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
+    <!-- Fecha de la cita -->
     <TextView
         android:id="@+id/textViewFecha"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Fecha" />
+        android:text="Fecha de la cita"
+        android:textSize="14sp"
+        android:textColor="#777"/>
 
+    <!-- Hora de la cita -->
     <TextView
         android:id="@+id/textViewHora"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hora" />
+        android:text="Hora de la cita"
+        android:textSize="14sp"
+        android:textColor="#777"/>
 
+    <!-- Descripción de la cita -->
     <TextView
         android:id="@+id/textViewDescripcion"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Descripción" />
-
+        android:text="Descripción de la cita"
+        android:textSize="14sp"
+        android:textColor="#777"/>
 </LinearLayout>

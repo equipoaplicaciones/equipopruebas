@@ -130,7 +130,7 @@ public class AgendarActivity extends AppCompatActivity {
                 return;
             }
 
-            String url = "http://192.168.100.110:5000/api/citas";
+            String url = "http://10.0.2.2:5001/api/citas";
 
             JsonObjectRequest request = new JsonObjectRequest(
                     Request.Method.POST,
