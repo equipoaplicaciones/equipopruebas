@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,7 +35,7 @@ import com.android.volley.toolbox.Volley;
 
 public class AgendarActivity extends AppCompatActivity {
     private EditText etNombre, etFecha, etHora, etDescripcion;
-    private Button btnAgendarCita;
+    private Button btnAgendarCita, btnVerHistorial;
     private String fechaSeleccionada = "";
 
     private Map<String, List<String>> citasPorFecha = new HashMap<>();
@@ -44,12 +45,15 @@ public class AgendarActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_agendar);
 
+        // Inicialización de vistas
         etNombre = findViewById(R.id.etNombre);
         etFecha = findViewById(R.id.etFecha);
-        etDescripcion = findViewById(R.id.etDescripcion);
         etHora = findViewById(R.id.etHora);
+        etDescripcion = findViewById(R.id.etDescripcion);
+
         btnAgendarCita = findViewById(R.id.btnAgendarCita);
 
+        // Listener para el campo de fecha
         etFecha.setOnClickListener(v -> {
             Calendar calendar = Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
@@ -66,10 +70,10 @@ public class AgendarActivity extends AppCompatActivity {
                     year, month, day
             );
             datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
-            bloquearFechas(datePickerDialog);
             datePickerDialog.show();
         });
 
+        // Listener para el campo de hora
         etHora.setOnClickListener(v -> {
             Calendar calendar = Calendar.getInstance();
             int hour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -80,7 +84,6 @@ public class AgendarActivity extends AppCompatActivity {
                     (view, selectedHour, selectedMinute) -> {
                         String formattedTime = String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute);
 
-                        // Validar que la hora esté dentro del rango permitido
                         if (selectedHour < 8 || selectedHour > 20) {
                             Toast.makeText(AgendarActivity.this, "Por favor selecciona una hora entre 8:00 AM y 8:00 PM.", Toast.LENGTH_SHORT).show();
                         } else if (isHoraOcupada(fechaSeleccionada, formattedTime)) {
@@ -103,18 +106,6 @@ public class AgendarActivity extends AppCompatActivity {
 
             if (nombre.isEmpty() || fecha.isEmpty() || hora.isEmpty()) {
                 Toast.makeText(AgendarActivity.this, "Nombre, fecha y hora son obligatorios.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            try {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                Date parsedDate = sdf.parse(fecha);
-                if (parsedDate != null) {
-                    fecha = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(parsedDate); // Formato ISO (YYYY-MM-DD)
-                }
-            } catch (ParseException e) {
-                Toast.makeText(AgendarActivity.this, "Error al convertir la fecha. Asegúrate de usar el formato correcto (DD/MM/YYYY).", Toast.LENGTH_LONG).show();
-                e.printStackTrace();
                 return;
             }
 
@@ -147,66 +138,51 @@ public class AgendarActivity extends AppCompatActivity {
             requestQueue.add(request);
         });
 
-        Button btnHistorial = findViewById(R.id.btnVerHistorial);
-        btnHistorial.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AgendarActivity.this, HistorialCitasActivity.class);
-                startActivity(intent);
-            }
+        // Listener para ver historial
+        btnVerHistorial.setOnClickListener(v -> {
+            Intent intent = new Intent(AgendarActivity.this, HistorialCitasActivity.class);
+            startActivity(intent);
         });
+
+        // Obtener citas previamente agendadas
+        obtenerCitasAgendadas();
+    }
+
+    private void obtenerCitasAgendadas() {
+        String url = "http://10.0.2.2:5001/api/citas";
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                response -> {
+                    try {
+                        JSONArray citasArray = response.getJSONArray("citas");
+                        for (int i = 0; i < citasArray.length(); i++) {
+                            JSONObject cita = citasArray.getJSONObject(i);
+                            String fecha = cita.getString("fecha");
+                            String hora = cita.getString("hora");
+
+                            citasPorFecha.putIfAbsent(fecha, new ArrayList<>());
+                            citasPorFecha.get(fecha).add(hora);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Toast.makeText(this, "Error procesando las citas", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> {
+                    Toast.makeText(this, "Error al obtener las citas", Toast.LENGTH_SHORT).show();
+                    Log.e("VolleyError", error.toString());
+                }
+        );
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(request);
     }
 
     private boolean isHoraOcupada(String fecha, String horaSeleccionada) {
         List<String> horasOcupadas = citasPorFecha.get(fecha);
-        if (horasOcupadas != null) {
-            return horasOcupadas.contains(horaSeleccionada);  // Devuelve true si la hora está ocupada
-        }
-        return false;
-    }
-
-    private void bloquearFechas(DatePickerDialog datePickerDialog) {
-        datePickerDialog.getDatePicker().setOnDateChangedListener((view, year, month, dayOfMonth) -> {
-            String fechaSeleccionada = String.format(Locale.getDefault(), "%02d/%02d/%d", dayOfMonth, month + 1, year);
-
-            // Verificar si esa fecha tiene horas ocupadas
-            List<String> horasOcupadas = citasPorFecha.get(fechaSeleccionada);
-
-            if (horasOcupadas != null) {
-                // Deshabilitar las horas ocupadas
-                bloquearHorasOcupadas(horasOcupadas);
-            }
-        });
-    }
-
-    private void bloquearHorasOcupadas(List<String> horasOcupadas) {
-        etHora.setOnClickListener(v -> {
-            Calendar calendar = Calendar.getInstance();
-            int hour = calendar.get(Calendar.HOUR_OF_DAY);
-            int minute = calendar.get(Calendar.MINUTE);
-
-            // Crear el TimePickerDialog
-            TimePickerDialog timePickerDialog = new TimePickerDialog(
-                    AgendarActivity.this,
-                    (view, selectedHour, selectedMinute) -> {
-                        String formattedTime = String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute);
-
-                        // Verificar si la hora seleccionada está ocupada
-                        if (horasOcupadas.contains(formattedTime)) {
-                            Toast.makeText(AgendarActivity.this, "Esta hora ya está ocupada.", Toast.LENGTH_SHORT).show();
-                        } else {
-                            etHora.setText(formattedTime);
-                        }
-                    },
-                    hour, minute, true
-            );
-
-            for (String horaOcupada : horasOcupadas) {
-                int horaOcupadaInt = Integer.parseInt(horaOcupada.split(":")[0]);
-                timePickerDialog.updateTime(horaOcupadaInt + 1, 0); // Bloqueando la hora ocupada
-            }
-
-            timePickerDialog.show();
-        });
+        return horasOcupadas != null && horasOcupadas.contains(horaSeleccionada);
     }
 }

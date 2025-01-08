@@ -55,6 +55,9 @@ dependencies {
     // Retrofit for API requests
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation(libs.recyclerview)
+
+    implementation ("androidx.recyclerview:recyclerview:1.2.1")
 
     // Testing Libraries
     testImplementation("junit:junit:4.13.2")
