@@ -11,10 +11,15 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class AgendarCitaActivity extends AppCompatActivity {
 
     private EditText editTextNombre, editTextFecha, editTextHora, editTextDescripcion;
@@ -31,11 +36,12 @@ public class AgendarCitaActivity extends AppCompatActivity {
         editTextDescripcion = findViewById(R.id.editTextDescripcion);
         btnGuardarCita = findViewById(R.id.btnGuardarCita);
 
-        SharedPreferences sharedPreferences = getSharedPreferences("userPrefs", MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences("UsuarioPrefs", MODE_PRIVATE);
         String userId = sharedPreferences.getString("MONGO_ID", null);
+        String token = sharedPreferences.getString("FIREBASE_TOKEN", null);
 
-        if (userId == null) {
-            Toast.makeText(this, "No se pudo obtener el ID del usuario", Toast.LENGTH_SHORT).show();
+        if (userId == null || token == null) {
+            Toast.makeText(this, "No se pudo obtener el ID del usuario o el token", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -64,6 +70,8 @@ public class AgendarCitaActivity extends AppCompatActivity {
             }
 
             String url = "http://10.0.2.2:5001/api/citas";
+
+            // Crear una solicitud JSON con el encabezado de autorización
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, cita,
                     response -> {
                         Toast.makeText(AgendarCitaActivity.this, "Cita agendada exitosamente", Toast.LENGTH_SHORT).show();
@@ -74,8 +82,18 @@ public class AgendarCitaActivity extends AppCompatActivity {
                     },
                     error -> {
                         Toast.makeText(AgendarCitaActivity.this, "Error al agendar la cita", Toast.LENGTH_SHORT).show();
-                    });
+                    }) {
 
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    // Agregar el token en los encabezados de la solicitud
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("Authorization", "Bearer " + token);
+                    return headers;
+                }
+            };
+
+            // Realizar la solicitud
             Volley.newRequestQueue(this).add(request);
         });
     }

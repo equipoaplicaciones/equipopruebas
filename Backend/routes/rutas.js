@@ -64,33 +64,20 @@ router.post('/api/citas', async (req, res) => {
     const { usuarioId, nombre, fecha, hora, descripcion } = req.body;
 
     try {
+        console.log("Datos recibidos:", req.body); // Verificar qué datos se reciben
         const fechaHora = new Date(`${fecha}T${hora}:00`);
 
-        const citaExistente = await Cita.findOne({ usuarioId, fecha: fechaHora });
-        if (citaExistente) {
-            return res.status(400).json({
-                mensaje: 'El usuario ya tiene una cita en la fecha y hora seleccionadas',
-            });
-        }
-
-        const nuevaCita = new Cita({
-            usuarioId,
-            nombre,
-            fecha: fechaHora,
-            hora,
-            descripcion
-        });
-
+        const nuevaCita = new Cita({ usuarioId, nombre, fecha: fechaHora, hora, descripcion });
         const citaGuardada = await nuevaCita.save();
 
-        res.status(201).json({
-            mensaje: 'Cita agendada exitosamente',
-            cita: citaGuardada
-        });
+        console.log("Cita guardada:", citaGuardada); // Verificar qué datos se guardan
+        res.status(201).json({ mensaje: 'Cita agendada exitosamente', cita: citaGuardada });
     } catch (error) {
+        console.error("Error al guardar la cita:", error);
         res.status(500).json({ mensaje: 'Error al agendar la cita', error: error.message });
     }
 });
+
 
 
 router.get('/api/citas', async (req, res) => {
@@ -124,25 +111,27 @@ router.get('/api/citas/:fecha', async (req, res) => {
     }
   });
 
+
+
   // Ruta para obtener las citas de un usuario por ID (MongoDB ID)
   router.get('/api/usuario/:id/citas', async (req, res) => {
     try {
         const usuarioId = req.params.id;
 
-        // Verificar que el ID se recibe correctamente
-        console.log("ID del usuario: ", usuarioId);
+        console.log("ID del usuario recibido:", usuarioId);
 
-        const citas = await Cita.find({ usuarioId });
+        // Asegúrate de convertir el usuarioId en ObjectId si es necesario
+        const citas = await Cita.find({ usuarioId }).populate('usuarioId');
 
-        res.status(200).json({
-            total: citas.length,
-            citas
-        });
+        console.log("Citas encontradas:", citas);
+
+        res.status(200).json({ total: citas.length, citas });
     } catch (error) {
-        console.error("Error al obtener las citas:", error); // Verificar el error en el backend
+        console.error("Error al obtener las citas:", error);
         res.status(500).json({ mensaje: 'Error al obtener las citas del usuario', error: error.message });
     }
 });
+
 
 
 

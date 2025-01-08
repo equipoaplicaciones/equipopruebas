@@ -28,12 +28,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 public class MainActivity extends AppCompatActivity {
     private FirebaseAuth auth;
-    private CheckBox checkBoxRecordar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);  // Asegúrate de que este es el layout correcto
 
         // Inicializar Firebase Auth
         auth = FirebaseAuth.getInstance();
@@ -42,18 +41,7 @@ public class MainActivity extends AppCompatActivity {
         EditText editEmail = findViewById(R.id.editTextTextEmailAddress);
         EditText editPassword = findViewById(R.id.editTextTextPassword);
         Button btnIniciarSesion = findViewById(R.id.button7);
-        checkBoxRecordar = findViewById(R.id.checkBox);
-
-        // Eliminar datos anteriores de SharedPreferences para pruebas
-        eliminarDatosSharedPreferences();
-
-        // Verificar si el usuario ya está autenticado
-        FirebaseUser currentUser = auth.getCurrentUser();
-        if (currentUser != null) {
-            // Si el usuario está autenticado, obtener el ID de MongoDB y redirigir
-            String userEmail = currentUser.getEmail();
-            obtenerIdMongoDb(userEmail);
-        }
+        CheckBox checkBoxRecordar = findViewById(R.id.checkBox);
 
         // Configurar el botón de inicio de sesión
         btnIniciarSesion.setOnClickListener(view -> {
@@ -76,21 +64,15 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        checkBoxRecordar.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        });
+
         // Configurar el ImageButton para redirigir a AgendarActivity
         ImageButton imageButton = findViewById(R.id.imageButton12);
         imageButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, AgendarActivity.class);
             startActivity(intent); // Iniciar la nueva actividad
         });
-    }
-
-    private void eliminarDatosSharedPreferences() {
-        // Eliminar todos los datos de SharedPreferences
-        SharedPreferences sharedPreferences = getSharedPreferences("userPrefs", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.clear(); // Elimina todos los datos guardados
-        editor.apply();
-        Log.d("MainActivity", "Datos de SharedPreferences eliminados");
     }
 
     private void iniciarSesion(String email, String password) {
@@ -107,6 +89,19 @@ public class MainActivity extends AppCompatActivity {
                             String userEmail = user.getEmail();
                             // Llamar al método para obtener el ID de MongoDB
                             obtenerIdMongoDb(userEmail);
+
+                            // Obtener el token de Firebase
+                            user.getIdToken(true).addOnCompleteListener(task1 -> {
+                                if (task1.isSuccessful()) {
+                                    String idToken = task1.getResult().getToken();
+                                    Log.d("MainActivity", "Token recuperado: " + idToken);
+
+                                    // Guardar el token si es necesario
+                                    guardarTokenEnSharedPreferences(idToken);
+                                } else {
+                                    Log.e("MainActivity", "Error al recuperar el token: " + task1.getException());
+                                }
+                            });
                         }
                     } else {
                         // Error al iniciar sesión
@@ -115,12 +110,22 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private void guardarIdEnSharedPreferences(String id) {
-        SharedPreferences sharedPreferences = getSharedPreferences("userPrefs", MODE_PRIVATE);
+    private void guardarTokenEnSharedPreferences(String token) {
+        SharedPreferences sharedPreferences = getSharedPreferences("UsuarioPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("FIREBASE_TOKEN", token);  // Guarda el token
+        editor.apply();
+        Log.d("MainActivity", "Token guardado en SharedPreferences: " + token);
+    }
+
+    private void guardarIdEnSharedPreferences(String id) {
+        SharedPreferences sharedPreferences = getSharedPreferences("UsuarioPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+// Quita editor.clear()
         editor.putString("MONGO_ID", id);
         editor.apply();
-        Log.d("MainActivity", "ID guardado en SharedPreferences: " + id); // Log para verificar que el ID se guarda
+        editor.apply();
+        Log.d("MainActivity", "ID guardado en SharedPreferences: " + id);
     }
 
     private void obtenerIdMongoDb(String email) {
@@ -174,4 +179,5 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
+
 

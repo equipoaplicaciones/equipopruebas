@@ -26,8 +26,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
 public class interfazusuario extends AppCompatActivity {
 
     private RecyclerView recyclerViewCitas;
@@ -46,6 +51,10 @@ public class interfazusuario extends AppCompatActivity {
 
         recyclerViewCitas.setLayoutManager(new LinearLayoutManager(this));
 
+        // Inicializar el adaptador con una lista vacía
+        citasAdapter = new CitasAdapter(citasList);
+        recyclerViewCitas.setAdapter(citasAdapter);
+
         String mongodbUserId = getMongodbUserIdFromPreferences();
         if (mongodbUserId != null) {
             obtenerCitasUsuario(mongodbUserId);
@@ -58,13 +67,13 @@ public class interfazusuario extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Registrar el BroadcastReceiver para actualizar la lista de citas
+        // Registrar el BroadcastReceiver para actualizar las citas cuando se agrega una nueva
         citaReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String userId = getMongodbUserIdFromPreferences();
                 if (userId != null) {
-                    obtenerCitasUsuario(userId);  // Recargar las citas
+                    obtenerCitasUsuario(userId);
                 }
             }
         };
@@ -80,7 +89,9 @@ public class interfazusuario extends AppCompatActivity {
 
     private String getMongodbUserIdFromPreferences() {
         SharedPreferences sharedPreferences = getSharedPreferences("UsuarioPrefs", MODE_PRIVATE);
-        return sharedPreferences.getString("MONGO_ID", null);
+        String id = sharedPreferences.getString("MONGO_ID", null);
+        Log.d("interfazusuario", "ID obtenido de SharedPreferences: " + id);
+        return id;
     }
 
     private void obtenerCitasUsuario(String userId) {
@@ -88,6 +99,8 @@ public class interfazusuario extends AppCompatActivity {
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {
                     try {
+                        Log.d("obtenerCitasUsuario", "Respuesta del servidor: " + response.toString());
+
                         if (response.has("citas")) {
                             JSONArray citasArray = response.getJSONArray("citas");
                             citasList.clear();
@@ -97,25 +110,47 @@ public class interfazusuario extends AppCompatActivity {
                                 String fecha = citaObject.getString("fecha");
                                 String hora = citaObject.getString("hora");
                                 String descripcion = citaObject.getString("descripcion");
-                                Cita cita = new Cita(nombre, fecha, hora, descripcion);
+
+                                // Convertir fecha a formato adecuado
+                                String fechaFormateada = formatDate(fecha);
+
+                                // Crear la cita y agregarla a la lista
+                                Cita cita = new Cita(nombre, fechaFormateada, hora, descripcion);
                                 citasList.add(cita);
                             }
-                            citasAdapter = new CitasAdapter(citasList);
-                            recyclerViewCitas.setAdapter(citasAdapter);
+
+                            // Actualizar el adaptador con las nuevas citas
+                            citasAdapter.actualizarCitas(citasList);
+                            citasAdapter.notifyDataSetChanged();  // Asegúrate de actualizar la vista
                         } else {
-                            Toast.makeText(this, "No se encontraron citas", Toast.LENGTH_SHORT).show();
+                            Log.d("obtenerCitasUsuario", "No se encontraron citas.");
                         }
+
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        Log.e("obtenerCitasUsuario", "Error al procesar las citas: ", e);
                     }
                 },
                 error -> {
+                    Log.e("obtenerCitasUsuario", "Error al obtener las citas: ", error);
                     Toast.makeText(this, "Error al obtener las citas", Toast.LENGTH_SHORT).show();
                 });
 
         Volley.newRequestQueue(this).add(request);
     }
-    //hay que sacar al juan diego
+
+    // Método para formatear la fecha recibida
+    private String formatDate(String dateStr) {
+        try {
+            SimpleDateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
+            Date date = iso8601Format.parse(dateStr);
+            SimpleDateFormat simpleFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+            return simpleFormat.format(date);
+        } catch (ParseException e) {
+            Log.e("formatDate", "Error al formatear la fecha", e);
+            return dateStr;  // Devolver la fecha original si ocurre un error
+        }
+    }
 }
+
 
 
