@@ -162,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "Error al codificar el correo electrónico.", Toast.LENGTH_SHORT).show();
         }
     }
+    //1.1
 }
 
 

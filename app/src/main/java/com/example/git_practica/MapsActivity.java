@@ -172,4 +172,4 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .title("Consultorio Dental")
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_dental_office))); // Icono del consultorio
     }
-}
+}//1.1

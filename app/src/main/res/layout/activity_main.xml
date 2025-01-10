@@ -8,7 +8,7 @@
     android:background="#FFFFFF"
     tools:context=".MainActivity">
 
-    <!-- Contenedor con Scroll -->
+    <!-- Contenedor con Scroll1 -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
