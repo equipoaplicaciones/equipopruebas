@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(cors());
 
 // Conexión a MongoDB Atlas
-mongoose.connect('mongodb+srv://kevinleyva:tescha@kevin.joqkehr.mongodb.net/miBaseDeDatos', {
+mongoose.connect('mongodb+srv://qwerty:qwerty123@kevin.joqkehr.mongodb.net/dentista?retryWrites=true&w=majority&appName=Kevin', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
