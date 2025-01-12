@@ -6,12 +6,15 @@ const cors = require('cors');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
-//43
+
+// Middleware para parsear JSON
 app.use(express.json());
+
+// Habilitar CORS para permitir solicitudes desde cualquier origen
 app.use(cors());
 
 // Conexión a MongoDB Atlas
-mongoose.connect('mongodb+srv://qwerty:qwerty123@kevin.joqkehr.mongodb.net/dentista?retryWrites=true&w=majority&appName=Kevin', {
+mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://qwerty:qwerty123@kevin.joqkehr.mongodb.net/dentista?retryWrites=true&w=majority&appName=Kevin', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
@@ -22,13 +25,15 @@ mongoose.connect('mongodb+srv://qwerty:qwerty123@kevin.joqkehr.mongodb.net/denti
     console.error('Error al conectar a MongoDB Atlas:', error);
 });
 
-// Ruta de prueba para ver si el servidor está funcionando
+// Ruta de prueba para verificar el servidor
 app.get('/', (req, res) => {
     res.send('¡Servidor Conectado a MongoDB Atlas!');
 });
 
+// Rutas principales
 app.use(rutas);
 
+// Iniciar el servidor
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });

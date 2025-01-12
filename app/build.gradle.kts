@@ -51,6 +51,7 @@ dependencies {
 
     // Volley for network requests
     implementation("com.android.volley:volley:1.2.1")
+    implementation("com.android.volley:volley:1.2.1")
 
     // Retrofit for API requests
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
