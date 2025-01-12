@@ -93,6 +93,14 @@ public class MainActivity extends AppCompatActivity {
                             String userEmail = user.getEmail();
                             obtenerIdMongoDb(userEmail);
 
+                            if ("admin@dentista.com".equals(userEmail)) {
+                                Intent adminIntent = new Intent(MainActivity.this, InterfazAdminActivity.class);
+                                startActivity(adminIntent);
+                                finish();
+                            } else {
+                                obtenerIdMongoDb(userEmail);
+                            }
+
                             user.getIdToken(true).addOnCompleteListener(task1 -> {
                                 if (task1.isSuccessful()) {
                                     String idToken = task1.getResult().getToken();
