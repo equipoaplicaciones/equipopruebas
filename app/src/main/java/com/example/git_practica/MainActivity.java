@@ -63,12 +63,19 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        ImageButton imageButtonServicios = findViewById(R.id.imageButton12);
+        imageButtonServicios.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ServiciosActivity.class);
+            startActivity(intent);
+        });
+
+
         // Configurar el ImageButton para redirigir a AgendarActivity
-        ImageButton imageButton = findViewById(R.id.imageButton12);
+        /*ImageButton imageButton = findViewById(R.id.imageButton12);
         imageButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, AgendarActivity.class);
             startActivity(intent);
-        });
+        });*/
 
         // Configurar el ImageButton para redirigir a MapsActivity
         ImageButton imageButton2 = findViewById(R.id.imageButton13);
@@ -80,6 +87,12 @@ public class MainActivity extends AppCompatActivity {
         ImageButton imageButtonPrivacidad = findViewById(R.id.imageButton14);
         imageButtonPrivacidad.setOnClickListener(v -> {
             Intent intent = new Intent(this, PrivacidadActivity.class);
+            startActivity(intent);
+        });
+
+        ImageButton imageButtonQuienesSomos = findViewById(R.id.imageButton15);
+        imageButtonQuienesSomos.setOnClickListener(v -> {
+            Intent intent = new Intent(this, QuienesSomosActivity.class);
             startActivity(intent);
         });
 

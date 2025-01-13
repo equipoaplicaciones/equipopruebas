@@ -37,6 +37,12 @@
             android:exported="false" />
         <activity
             android:name=".PrivacidadActivity" />
+        <activity
+            android:name=".QuienesSomosActivity" />
+        <activity
+            android:name=".ServiciosActivity" />
+
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyADzVi_xdbhcFjfgKcABzB6iq4qB98UOgs" />
