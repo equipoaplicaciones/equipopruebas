@@ -145,7 +145,7 @@
                 android:layout_weight="1"
                 android:scaleType="fitCenter"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                app:srcCompat="@drawable/nosotros" />
+                app:srcCompat="@drawable/whous" />
 
             <ImageButton
                 android:id="@+id/imageButton12"
@@ -154,7 +154,7 @@
                 android:layout_weight="1"
                 android:scaleType="fitCenter"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                app:srcCompat="@drawable/servicios" />
+                app:srcCompat="@drawable/services" />
 
             <ImageButton
                 android:id="@+id/imageButton13"
@@ -163,7 +163,7 @@
                 android:layout_weight="1"
                 android:scaleType="fitCenter"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                app:srcCompat="@drawable/contacto" />
+                app:srcCompat="@drawable/ubi" />
 
             <ImageButton
                 android:id="@+id/imageButton14"
@@ -172,7 +172,7 @@
                 android:layout_weight="1"
                 android:scaleType="fitCenter"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                app:srcCompat="@drawable/aviso" />
+                app:srcCompat="@drawable/privacidad" />
         </LinearLayout>
 
 

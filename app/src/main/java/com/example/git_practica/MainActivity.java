@@ -77,6 +77,13 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        ImageButton imageButtonPrivacidad = findViewById(R.id.imageButton14);
+        imageButtonPrivacidad.setOnClickListener(v -> {
+            Intent intent = new Intent(this, PrivacidadActivity.class);
+            startActivity(intent);
+        });
+
+
         // CheckBox: Listener
         checkBoxRecordar.setOnCheckedChangeListener((buttonView, isChecked) -> {
             // Acción al marcar/desmarcar el CheckBox
