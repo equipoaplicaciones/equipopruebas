@@ -134,12 +134,13 @@ router.get('/api/citas/:fecha', async (req, res) => {
 
 router.put('/api/citas/:id', async (req, res) => {
     try {
-        const { nombre, fecha, hora, descripcion } = req.body;
+        const { fecha, hora } = req.body;
         const fechaHora = new Date(`${fecha}T${hora}:00`);
 
+        // Buscar la cita y actualizar solo la fecha y la hora
         const citaActualizada = await Cita.findByIdAndUpdate(
             req.params.id,
-            { nombre, fecha: fechaHora, hora, descripcion },
+            { fecha: fechaHora, hora },
             { new: true }
         );
 
@@ -155,6 +156,7 @@ router.put('/api/citas/:id', async (req, res) => {
         res.status(500).json({ mensaje: 'Error al actualizar la cita', error: error.message });
     }
 });
+
 
 router.delete('/api/citas/:id', async (req, res) => {
     try {
