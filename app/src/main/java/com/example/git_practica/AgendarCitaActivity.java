@@ -73,8 +73,8 @@ public class AgendarCitaActivity extends AppCompatActivity {
                 return;
             }
 
-            String url = "http://10.0.2.2:5001/api/citas/" + userId; // Incluir userId en la URL
-            //String url = "http://192.168.100.110:5001/api/citas/" + userId;
+            //String url = "http://10.0.2.2:5001/api/citas/" + userId; // Incluir userId en la URL
+            String url = "http://192.168.100.110:5001/api/citas/" + userId;
 
             // Crear una solicitud JSON con el encabezado de autorización
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, cita,
@@ -116,7 +116,9 @@ public class AgendarCitaActivity extends AppCompatActivity {
 
     // Método para descargar el PDF
     private void downloadPdf(String citaId, String token) {
-        String pdfUrl = "http://10.0.2.2:5001/api/citas/" + citaId + "/descargar"; // URL para descargar el PDF con citaId
+        //String pdfUrl = "http://10.0.2.2:5001/api/citas/" + citaId + "/descargar"; // URL para descargar el PDF con citaId
+        String pdfUrl = "http://192.168.100.110:5001/api/citas/" + citaId + "/descargar";
+
 
         // Realizar una solicitud para descargar el archivo PDF
         Request<byte[]> downloadRequest = new Request<byte[]>(Request.Method.GET, pdfUrl,
@@ -195,7 +197,6 @@ public class AgendarCitaActivity extends AppCompatActivity {
             }
         }
     }
-
 
 }
 

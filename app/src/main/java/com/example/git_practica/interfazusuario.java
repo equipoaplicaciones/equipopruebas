@@ -96,8 +96,8 @@ public class interfazusuario extends AppCompatActivity {
     }
 
     private void obtenerCitasUsuario(String userId) {
-        String url = "http://10.0.2.2:5001/api/usuario/" + userId + "/citas";
-        //String url = "http://192.168.100.110:5001/api/usuario/" + userId + "/citas";
+        //String url = "http://10.0.2.2:5001/api/usuario/" + userId + "/citas";
+        String url = "http://192.168.100.110:5001/api/usuario/" + userId + "/citas";
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {

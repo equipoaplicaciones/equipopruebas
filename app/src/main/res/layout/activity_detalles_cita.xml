@@ -39,6 +39,16 @@
             android:textSize="16sp" />
 
         <Button
+            android:id="@+id/btnAceptarCita"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Aceptar Cita"
+            android:textSize="16sp"
+            android:layout_marginTop="10dp"
+            android:textColor="@android:color/white"
+            android:background="@android:color/holo_blue_light" />
+
+        <Button
             android:id="@+id/btnCancelarCita"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

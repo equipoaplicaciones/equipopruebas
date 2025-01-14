@@ -30,7 +30,7 @@ import java.util.ArrayList;
 public class InterfazAdminActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-    private CitasAdapter citasAdapter;
+    private CitasAdapter2 citasAdapter; // Cambiar a CitasAdapter2
     private ArrayList<Cita> citasList;
 
     @Override
@@ -41,7 +41,7 @@ public class InterfazAdminActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerViewCitas);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         citasList = new ArrayList<>();
-        citasAdapter = new CitasAdapter(citasList);
+        citasAdapter = new CitasAdapter2(citasList); // Usar CitasAdapter2
         recyclerView.setAdapter(citasAdapter);
 
         fetchCitas();
@@ -68,7 +68,7 @@ public class InterfazAdminActivity extends AppCompatActivity {
                             citasList.add(new Cita(id, nombre, fecha, hora, descripcion));
                         }
 
-                        citasAdapter.notifyDataSetChanged();
+                        citasAdapter.notifyDataSetChanged(); // Notificar al adaptador para actualizar la vista
 
                     } catch (JSONException e) {
                         Toast.makeText(InterfazAdminActivity.this, "Error procesando datos del servidor", Toast.LENGTH_SHORT).show();
@@ -94,7 +94,6 @@ public class InterfazAdminActivity extends AppCompatActivity {
             fetchCitas();      // Vuelve a cargar las citas desde el servidor
         }
     }
-
 }
 
 

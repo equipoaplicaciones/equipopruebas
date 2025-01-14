@@ -5,29 +5,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-public class CitasAdapter extends RecyclerView.Adapter<CitasAdapter.CitaViewHolder> {
+
+public class CitasAdapter2 extends RecyclerView.Adapter<CitasAdapter2.CitaViewHolder> {
 
     private List<Cita> citasList;
 
-    public CitasAdapter(List<Cita> citasList) {
+    public CitasAdapter2(List<Cita> citasList) {
         this.citasList = citasList;
     }
 
     @Override
     public CitaViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // Inflar el layout solo con los elementos necesarios para el usuario (sin botón)
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_cita, parent, false);
+        // Solo inflar el diseño de admin (item_cita2)
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_cita2, parent, false);
         return new CitaViewHolder(view);
     }
 
@@ -40,7 +36,20 @@ public class CitasAdapter extends RecyclerView.Adapter<CitasAdapter.CitaViewHold
         holder.horaTextView.setText(cita.getHora());
         holder.descripcionTextView.setText(cita.getDescripcion());
 
-        // No necesitas manejar el botón, ya que no existe para los usuarios
+        holder.btnVerDetalles.setOnClickListener(v -> {
+            // Crear un Intent para iniciar DetallesCitaActivity
+            Intent intent = new Intent(v.getContext(), DetallesCitaActivity.class);
+
+            // Pasar datos de la cita
+            intent.putExtra("nombre", cita.getNombre());
+            intent.putExtra("fecha", cita.getFecha());
+            intent.putExtra("hora", cita.getHora());
+            intent.putExtra("descripcion", cita.getDescripcion());
+            intent.putExtra("citaId", cita.getId());
+
+            // Iniciar la nueva Activity
+            v.getContext().startActivity(intent);
+        });
     }
 
     @Override
@@ -56,6 +65,7 @@ public class CitasAdapter extends RecyclerView.Adapter<CitasAdapter.CitaViewHold
     public class CitaViewHolder extends RecyclerView.ViewHolder {
 
         TextView nombreTextView, fechaTextView, horaTextView, descripcionTextView;
+        Button btnVerDetalles;
 
         public CitaViewHolder(View itemView) {
             super(itemView);
@@ -63,7 +73,7 @@ public class CitasAdapter extends RecyclerView.Adapter<CitasAdapter.CitaViewHold
             fechaTextView = itemView.findViewById(R.id.fechaCita);
             horaTextView = itemView.findViewById(R.id.horaCita);
             descripcionTextView = itemView.findViewById(R.id.descripcionCita);
-            // No inicializas el botón aquí, ya que no está en el layout para los usuarios
+            btnVerDetalles = itemView.findViewById(R.id.btnVerDetalles);
         }
     }
 }

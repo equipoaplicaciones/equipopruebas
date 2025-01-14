@@ -30,6 +30,11 @@ const citaSchema = new mongoose.Schema({
         ref: 'Usuario', // Relación con la colección Usuario
         required: [true, 'El usuario asociado es obligatorio'],
     },
+    status: { 
+        type: String, 
+        default: 'Pendiente', 
+        enum: ['Pendiente', 'Aceptada', 'Pospuesta', 'Cancelada'] 
+    },
 }, {
     timestamps: true, // Agrega campos createdAt y updatedAt automáticamente
 });

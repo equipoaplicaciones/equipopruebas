@@ -108,6 +108,26 @@ router.get('/api/citas/:fecha', async (req, res) => {
     }
   });
 
+  router.put('/:id/estado', async (req, res) => {
+    const { id } = req.params;
+    const { nuevoEstado } = req.body;
+  
+    try {
+      const cita = await Cita.findById(id);
+      if (!cita) {
+        return res.status(404).json({ mensaje: 'Cita no encontrada' });
+      }
+  
+      // Actualizar el estado
+      cita.status = nuevoEstado;
+      await cita.save();
+  
+      res.json({ mensaje: 'Estado actualizado correctamente', cita });
+    } catch (error) {
+      res.status(500).json({ mensaje: 'Error al actualizar el estado', error });
+    }
+  });
+
 router.get('/api/usuario/:id/citas', async (req, res) => {
     try {
         const usuarioId = req.params.id;

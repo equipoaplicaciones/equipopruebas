@@ -60,8 +60,8 @@ public class RegistroActivity extends AppCompatActivity {
 
     private void enviarDatosBackend(String nombre, String email, String contrasena) {
         // URL de tu backend
-        String url = "http://10.0.2.2:5001/api/registro";  // URL correcta para el emulador
-        //String url = "http://192.168.100.110:5001/api/registro";
+        //String url = "http://10.0.2.2:5001/api/registro";  // URL correcta para el emulador
+        String url = "http://192.168.100.110:5001/api/registro";
 
         // Crear el objeto JSON con los datos del usuario
         JSONObject userObject = new JSONObject();
