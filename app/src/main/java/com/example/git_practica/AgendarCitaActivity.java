@@ -73,8 +73,8 @@ public class AgendarCitaActivity extends AppCompatActivity {
                 return;
             }
 
-            //String url = "http://10.0.2.2:5001/api/citas/" + userId; // Incluir userId en la URL
-            String url = "http://192.168.100.110:5001/api/citas/" + userId;
+            String url = "http://10.0.2.2:5001/api/citas/" + userId; // Incluir userId en la URL
+            //String url = "http://192.168.100.110:5001/api/citas/" + userId;
 
             // Crear una solicitud JSON con el encabezado de autorización
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, cita,

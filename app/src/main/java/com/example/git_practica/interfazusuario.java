@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,13 +33,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
 public class interfazusuario extends AppCompatActivity {
 
     private RecyclerView recyclerViewCitas;
     private CitasAdapter citasAdapter;
     private List<Cita> citasList = new ArrayList<>();
-    private Button btnAgendarCita;
+    private ImageButton btnAgendarCita; // Cambiado de Button a ImageButton
     private BroadcastReceiver citaReceiver;
 
     @Override
@@ -47,7 +47,7 @@ public class interfazusuario extends AppCompatActivity {
         setContentView(R.layout.activity_interfazusuario);
 
         recyclerViewCitas = findViewById(R.id.recyclerViewCitas);
-        btnAgendarCita = findViewById(R.id.btnAgendarCita);
+        btnAgendarCita = findViewById(R.id.btnAgendarCita); // btnAgendarCita ahora es un ImageButton
 
         recyclerViewCitas.setLayoutManager(new LinearLayoutManager(this));
 
@@ -62,6 +62,7 @@ public class interfazusuario extends AppCompatActivity {
             Toast.makeText(this, "No se pudo obtener el ID de MongoDB", Toast.LENGTH_SHORT).show();
         }
 
+        // Configurar el clic del botón para agendar cita
         btnAgendarCita.setOnClickListener(v -> {
             Intent intent = new Intent(interfazusuario.this, AgendarCitaActivity.class);
             startActivity(intent);
@@ -95,8 +96,8 @@ public class interfazusuario extends AppCompatActivity {
     }
 
     private void obtenerCitasUsuario(String userId) {
-        //String url = "http://10.0.2.2:5001/api/usuario/" + userId + "/citas";
-        String url = "http://192.168.100.110:5001/api/usuario/" + userId + "/citas";
+        String url = "http://10.0.2.2:5001/api/usuario/" + userId + "/citas";
+        //String url = "http://192.168.100.110:5001/api/usuario/" + userId + "/citas";
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {
@@ -123,7 +124,7 @@ public class interfazusuario extends AppCompatActivity {
 
                             // Actualizar el adaptador con las nuevas citas
                             citasAdapter.actualizarCitas(citasList);
-                            citasAdapter.notifyDataSetChanged();  // Asegúrate de actualizar la vista
+                            citasAdapter.notifyDataSetChanged(); // Asegúrate de actualizar la vista
                         } else {
                             Log.d("obtenerCitasUsuario", "No se encontraron citas.");
                         }
@@ -149,7 +150,7 @@ public class interfazusuario extends AppCompatActivity {
             return simpleFormat.format(date);
         } catch (ParseException e) {
             Log.e("formatDate", "Error al formatear la fecha", e);
-            return dateStr;  // Devolver la fecha original si ocurre un error
+            return dateStr; // Devolver la fecha original si ocurre un error
         }
     }
 }
