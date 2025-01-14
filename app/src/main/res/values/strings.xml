@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Git_Practica</string>
-</resources>
+    <string name="app_name">Git Practica</string>
+    <string name="default_web_client_id">532736307586-5p4st1vakd6o7oukjmbmc476ii78je8i.apps.googleusercontent.com</string>
+></resources>
