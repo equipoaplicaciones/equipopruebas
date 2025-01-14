@@ -35,6 +35,9 @@
         <activity
             android:name=".RegistroActivity"
             android:exported="false" />
+        <activity
+            android:name=".DetallesCitaActivity"
+            android:exported="false" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyADzVi_xdbhcFjfgKcABzB6iq4qB98UOgs" />

@@ -1,5 +1,6 @@
 package com.example.git_practica;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -50,45 +51,50 @@ public class InterfazAdminActivity extends AppCompatActivity {
         String url = "http://192.168.100.110:5001/api/citas";
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            // Obtén el arreglo de citas del JSON
-                            JSONArray citasArray = response.getJSONArray("citas");
+                response -> {
+                    try {
+                        JSONArray citasArray = response.getJSONArray("citas");
 
-                            // Itera sobre las citas
-                            for (int i = 0; i < citasArray.length(); i++) {
-                                JSONObject cita = citasArray.getJSONObject(i);
-                                String nombre = cita.getString("nombre");
-                                String fecha = cita.getString("fecha");
-                                String hora = cita.getString("hora");
-                                String descripcion = cita.getString("descripcion");
+                        for (int i = 0; i < citasArray.length(); i++) {
+                            JSONObject cita = citasArray.getJSONObject(i);
 
-                                citasList.add(new Cita(nombre, fecha, hora, descripcion));
-                            }
+                            String id = cita.getString("_id"); // Asegúrate de que "_id" coincide con el campo en tu API
+                            String nombre = cita.getString("nombre");
+                            String fecha = cita.getString("fecha");
+                            String hora = cita.getString("hora");
+                            String descripcion = cita.getString("descripcion");
 
-                            citasAdapter.notifyDataSetChanged();
-
-                        } catch (JSONException e) {
-                            // Error procesando datos del JSON
-                            Toast.makeText(InterfazAdminActivity.this, "Error procesando datos del servidor", Toast.LENGTH_SHORT).show();
-                            Log.e("FetchCitas", "Detalles del error: " + e.getMessage(), e);
+                            // Agregar la cita con su ID
+                            citasList.add(new Cita(id, nombre, fecha, hora, descripcion));
                         }
+
+                        citasAdapter.notifyDataSetChanged();
+
+                    } catch (JSONException e) {
+                        Toast.makeText(InterfazAdminActivity.this, "Error procesando datos del servidor", Toast.LENGTH_SHORT).show();
+                        Log.e("FetchCitas", "Detalles del error: " + e.getMessage(), e);
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Error en la solicitud
-                        Toast.makeText(InterfazAdminActivity.this, "Error al obtener datos del servidor", Toast.LENGTH_SHORT).show();
-                        Log.e("FetchCitas", "Error al obtener datos: " + error.getMessage(), error);
-                    }
+                error -> {
+                    Toast.makeText(InterfazAdminActivity.this, "Error al obtener datos del servidor", Toast.LENGTH_SHORT).show();
+                    Log.e("FetchCitas", "Error al obtener datos: " + error.getMessage(), error);
                 });
 
         RequestQueue queue = Volley.newRequestQueue(this);
         queue.add(jsonObjectRequest);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1 && resultCode == RESULT_OK) { // Verifica el código de solicitud y el resultado
+            // Recarga las citas desde el servidor al regresar
+            citasList.clear(); // Limpia la lista actual
+            fetchCitas();      // Vuelve a cargar las citas desde el servidor
+        }
+    }
+
 }
 
 

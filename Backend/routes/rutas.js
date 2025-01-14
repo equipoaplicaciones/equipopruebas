@@ -113,7 +113,6 @@ router.get('/api/citas/:fecha', async (req, res) => {
 
 
 
-  // Ruta para obtener las citas de un usuario por ID (MongoDB ID)
   router.get('/api/usuario/:id/citas', async (req, res) => {
     try {
         const usuarioId = req.params.id;

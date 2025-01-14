@@ -1,60 +1,44 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="?android:attr/selectableItemBackground">
+    android:padding="8dp">
 
-    <!-- Nombre del paciente -->
     <TextView
-        android:id="@+id/tvNombre"
+        android:id="@+id/nombreCita"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Nombre del paciente"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="4dp" />
-
-    <!-- Fecha y hora de la cita -->
-    <TextView
-        android:id="@+id/tvFecha"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Fecha: 2025-01-12"
+        android:text="Nombre de la Cita"
         android:textSize="16sp"
-        android:layout_marginBottom="2dp" />
+        android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/tvHora"
+        android:id="@+id/fechaCita"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hora: 10:00 AM"
-        android:textSize="16sp"
-        android:layout_marginBottom="4dp" />
+        android:text="Fecha"
+        android:textSize="14sp" />
 
-    <!-- Descripción de la cita -->
     <TextView
-        android:id="@+id/tvDescripcion"
+        android:id="@+id/horaCita"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Descripción: Consulta general"
-        android:textSize="14sp"
-        android:layout_marginBottom="8dp" />
+        android:text="Hora"
+        android:textSize="14sp" />
 
-    <!-- Botones de acción -->
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/descripcionCita"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="end">
+        android:text="Descripción"
+        android:textSize="14sp" />
 
-        <Button
-            android:id="@+id/btnGestionarCita"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Gestionar"
-            android:backgroundTint="@android:color/holo_blue_light" />
-    </LinearLayout>
+    <Button
+        android:id="@+id/btnVerDetalles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ver Detalles"
+        android:layout_marginTop="8dp" />
+
 </LinearLayout>
