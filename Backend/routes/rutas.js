@@ -28,7 +28,6 @@ router.post('/api/registro', async (req, res) => {
     }
 });
 
-
 // Ruta para obtener un usuario específico por ID
 router.get('/api/usuario/:id', async (req, res) => {
     try {
@@ -78,8 +77,6 @@ router.post('/api/citas', async (req, res) => {
     }
 });
 
-
-
 router.get('/api/citas', async (req, res) => {
     try {
         const citas = await Cita.find(); // Obtiene todas las citas de la colección
@@ -111,9 +108,7 @@ router.get('/api/citas/:fecha', async (req, res) => {
     }
   });
 
-
-
-  router.get('/api/usuario/:id/citas', async (req, res) => {
+router.get('/api/usuario/:id/citas', async (req, res) => {
     try {
         const usuarioId = req.params.id;
 
@@ -130,7 +125,6 @@ router.get('/api/citas/:fecha', async (req, res) => {
         res.status(500).json({ mensaje: 'Error al obtener las citas del usuario', error: error.message });
     }
 });
-
 
 router.put('/api/citas/:id', async (req, res) => {
     try {
