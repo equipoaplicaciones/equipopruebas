@@ -62,7 +62,7 @@ public class interfazusuario extends AppCompatActivity {
             Toast.makeText(this, "No se pudo obtener el ID de MongoDB", Toast.LENGTH_SHORT).show();
         }
 
-        // Configurar el clic del botón para agendar cita
+        // Configurar el clic del botón para agendar cita1
         btnAgendarCita.setOnClickListener(v -> {
             Intent intent = new Intent(interfazusuario.this, AgendarCitaActivity.class);
             startActivity(intent);

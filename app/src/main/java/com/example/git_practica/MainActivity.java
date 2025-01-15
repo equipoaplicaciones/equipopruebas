@@ -63,6 +63,17 @@ public class MainActivity extends AppCompatActivity {
         Button btnLogin = findViewById(R.id.button7);
         EditText emailField = findViewById(R.id.editTextTextEmailAddress);  // Corregido: falta cerrar el paréntesis
         EditText passwordField = findViewById(R.id.editTextTextPassword);
+        Button Registro = findViewById(R.id.btnRegistro);
+        ImageButton mapa = findViewById(R.id.imageButton13);
+
+
+
+        Button registro = findViewById(R.id.btnRegistro); // Declaración única
+        registro.setOnClickListener(v -> {
+            Intent intent = new Intent(this, RegistroActivity.class);
+            startActivity(intent);
+        });
+
 
         btnLogin.setOnClickListener(view -> {
             String email = emailField.getText().toString().trim();
@@ -74,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
                 iniciarSesion(email, password);
             }
         });
+
+
 
         // Otros botones de navegación
         configurarBotonesDeNavegacion();
@@ -171,8 +184,8 @@ public class MainActivity extends AppCompatActivity {
     private void obtenerIdMongoDb(String email) {
         try {
             String encodedEmail = URLEncoder.encode(email, "UTF-8");
-            //String url = "http://10.0.2.2:5001/api/usuario/mongodb/" + encodedEmail;
-            String url = "http://192.168.100.110:5001/api/usuario/mongodb/" + encodedEmail;
+            String url = "http://10.0.2.2:5001/api/usuario/mongodb/" + encodedEmail;
+            //String url = "http://192.168.100.110:5001/api/usuario/mongodb/" + encodedEmail;
 
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                     response -> {
@@ -229,8 +242,13 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, PrivacidadActivity.class);
             startActivity(intent);
         });
+
+        ImageButton mapa = findViewById(R.id.imageButton13);
+        mapa.setOnClickListener(v -> {
+            Intent intent = new Intent(this, MapsActivity.class);
+            startActivity(intent);
+        });
+
     }
 }
-
-
 
