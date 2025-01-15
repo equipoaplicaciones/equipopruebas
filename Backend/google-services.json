@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "532736307586",
+    "project_id": "citasdentista-24f6c",
+    "storage_bucket": "citasdentista-24f6c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:532736307586:android:012b3b6f76e0a0567a9f9b",
+        "android_client_info": {
+          "package_name": "com.example.git_practica"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2pHYdFtgmDegPSyM5eMw2jtVRCEBBGKY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

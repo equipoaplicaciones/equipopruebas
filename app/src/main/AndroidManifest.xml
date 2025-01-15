@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -16,25 +15,38 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Git_Practica"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".AgendarCitaActivity"
+            android:exported="false" />
+        <activity
+            android:name=".interfazusuario"
+            android:exported="false" />
+        <activity
+            android:name=".RegistroActivity"
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyADzVi_xdbhcFjfgKcABzB6iq4qB98UOgs" />
 
-        <activity android:name=".MainActivity"
-            android:label="Map" android:exported="true">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="Map">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".MapsActivity"
-            android:label="Map" android:exported="true" />
-
+        <activity
+            android:name=".MapsActivity"
+            android:exported="true"
+            android:label="Map" />
+        <activity android:name=".AgendarActivity" />
+        <activity android:name=".HistorialCitasActivity" />
     </application>
-
-
 
 </manifest>
