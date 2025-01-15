@@ -32,7 +32,7 @@ public class AgendarCitaActivity extends AppCompatActivity {
     private EditText editTextNombre, editTextFecha, editTextHora, editTextDescripcion;
     private Button btnGuardarCita;
     private byte[] pdfData; // Variable global para almacenar los datos del PDF descargado
-
+//implementacion del calendario
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

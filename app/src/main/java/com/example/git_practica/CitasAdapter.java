@@ -23,7 +23,6 @@ public class CitasAdapter extends RecyclerView.Adapter<CitasAdapter.CitaViewHold
         this.citasList = citasList;
     }
 
-    @NonNull
     @Override
     public CitaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // Inflar el layout del item_cita
@@ -82,6 +81,7 @@ public class CitasAdapter extends RecyclerView.Adapter<CitasAdapter.CitaViewHold
             horaTextView = itemView.findViewById(R.id.horaCita);
             descripcionTextView = itemView.findViewById(R.id.descripcionCita);
             cardView = itemView.findViewById(R.id.cardView); // Obtener referencia a la CardView
+
         }
     }
 }

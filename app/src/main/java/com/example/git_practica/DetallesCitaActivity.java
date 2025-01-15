@@ -113,7 +113,7 @@ public class DetallesCitaActivity extends AppCompatActivity {
                 response -> {
                     Toast.makeText(this, "Cita cancelada exitosamente", Toast.LENGTH_SHORT).show();
 
-                    // Redirigir a InterfazAdminActivity
+                    // Redirigir a InterfazAdminActivity1
                     Intent intent = new Intent(DetallesCitaActivity.this, InterfazAdminActivity.class);
                     startActivity(intent);
                     finish();  // Terminar la actividad actual

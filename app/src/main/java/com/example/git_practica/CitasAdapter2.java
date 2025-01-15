@@ -40,7 +40,7 @@ public class CitasAdapter2 extends RecyclerView.Adapter<CitasAdapter2.CitaViewHo
             // Crear un Intent para iniciar DetallesCitaActivity
             Intent intent = new Intent(v.getContext(), DetallesCitaActivity.class);
 
-            // Pasar datos de la cita
+            // Pasando dato de la cita c;
             intent.putExtra("nombre", cita.getNombre());
             intent.putExtra("fecha", cita.getFecha());
             intent.putExtra("hora", cita.getHora());
