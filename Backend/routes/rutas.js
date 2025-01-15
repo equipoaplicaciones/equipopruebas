@@ -216,15 +216,18 @@ router.get('/api/usuario/mongodb/:email', async (req, res) => {
         res.status(500).json({ mensaje: 'Error al obtener el ID de MongoDB', error: error.message });
     }
 });
+const moment = require('moment-timezone');
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
+// Ruta para crear una cita
 router.post('/api/citas/:usuarioId', async (req, res) => {
     const citaId = req.params.id; // ID de la cita
     const usuarioId = req.params.usuarioId; // El usuarioId ahora viene de la URL
     const { nombre, fecha, hora, descripcion } = req.body;
 
     try {
+        // Agregar logs para depurar los datos recibidos
         console.log('Datos recibidos:', { citaId, nombre, fecha, hora, descripcion, usuarioId });
 
         // Validar los datos de entrada
@@ -232,7 +235,15 @@ router.post('/api/citas/:usuarioId', async (req, res) => {
             return res.status(400).json({ mensaje: 'Todos los campos son obligatorios.' });
         }
 
-        const fechaHora = new Date(`${fecha}T${hora}:00`);
+        // Verificar la fecha y hora recibidas
+        console.log('Fecha:', fecha);
+        console.log('Hora:', hora);
+
+        // Combina la fecha y hora sin conversión a zona horaria
+        const fechaHora = moment(`${fecha}T${hora}:00`, "YYYY-MM-DDTHH:mm:ss").toDate();
+        console.log('Fecha y hora combinada:', fechaHora);
+
+        // Verificar si la fechaHora es válida
         if (isNaN(fechaHora.getTime())) {
             return res.status(400).json({ mensaje: 'Fecha u hora inválidas.' });
         }
@@ -248,7 +259,7 @@ router.post('/api/citas/:usuarioId', async (req, res) => {
         const nuevaCita = new Cita({
             _id: citaId,
             nombre,
-            fecha: fechaHora,
+            fecha: fechaHora,  // Guardar la fecha sin zona horaria
             hora,
             descripcion,
             usuarioId, // Asociamos el usuarioId correctamente desde la URL
@@ -269,8 +280,6 @@ router.post('/api/citas/:usuarioId', async (req, res) => {
         const doc = new PDFDocument({ margin: 50 });
         const stream = fs.createWriteStream(pdfPath);
         doc.pipe(stream);
-
-        
 
         // Título con color y margen
         doc.fontSize(24).fillColor('#4CAF50').text('Comprobante de Cita', { align: 'center' });
@@ -318,6 +327,51 @@ router.post('/api/citas/:usuarioId', async (req, res) => {
     } catch (error) {
         console.error('Error al crear la cita:', error);
         res.status(500).json({ mensaje: 'Error al crear la cita.', error: error.message });
+    }
+});
+
+// Ruta para obtener horas disponibles
+router.get('/api/citas/horasDisponibles', async (req, res) => {
+    try {
+        const { fecha } = req.query;
+        if (!fecha) {
+            return res.status(400).json({ mensaje: 'Se debe proporcionar una fecha' });
+        }
+
+        // Asegurarse de que la fecha esté correctamente formateada
+        const parsedFecha = moment(fecha, "YYYY-MM-DD", true); // El tercer parámetro "true" valida estrictamente el formato
+        if (!parsedFecha.isValid()) {
+            return res.status(400).json({ mensaje: 'Fecha inválida' });
+        }
+
+        // Definir las horas de inicio y fin (9:00 AM y 6:00 PM)
+        const startTime = parsedFecha.set({ hour: 9, minute: 0, second: 0, millisecond: 0 }).toDate();
+        const endTime = parsedFecha.set({ hour: 18, minute: 0, second: 0, millisecond: 0 }).toDate();
+
+        console.log("Start Time: ", startTime);
+        console.log("End Time: ", endTime);
+
+        // Buscar citas entre el rango de horas
+        const citas = await Cita.find({
+            fecha: {
+                $gte: startTime,
+                $lt: endTime
+            }
+        });
+
+        const horasDisponibles = [];
+        for (let time = startTime; time < endTime; time.setMinutes(time.getMinutes() + 30)) {
+            const hora = moment(time).format("HH:mm"); // Usar moment para el formato de hora
+            const existeCita = citas.some(cita => cita.hora === hora);
+            if (!existeCita) {
+                horasDisponibles.push(hora);
+            }
+        }
+
+        res.status(200).json({ horasDisponibles });
+    } catch (error) {
+        console.error("Error al obtener las horas disponibles:", error);
+        res.status(500).json({ mensaje: 'Error al obtener las horas disponibles', error: error.message });
     }
 });
 

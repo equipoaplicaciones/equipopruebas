@@ -45,8 +45,8 @@ public class VolleyHelper {
                             com.android.volley.Response.Listener<JSONObject> listener,
                             com.android.volley.Response.ErrorListener errorListener) {
 
-        //String url = "http://10.0.2.2:5001/api/citas";
-        String url = "http://192.168.100.110:5001/api/citas";
+        String url = "http://10.0.2.2:5001/api/citas";
+        //String url = "http://192.168.100.110:5001/api/citas";
 
         try {
             // Convertir la fecha a un formato ISO 8601
@@ -83,8 +83,8 @@ public class VolleyHelper {
     public void obtenerHistorialCitas(com.android.volley.Response.Listener<JSONObject> listener,
                                       com.android.volley.Response.ErrorListener errorListener) {
 
-        //String url = "http://10.0.2.2:5001/api/citas";
-        String url = "http://192.168.100.110:5001/api/citas";
+        String url = "http://10.0.2.2:5001/api/citas";
+        //String url = "http://192.168.100.110:5001/api/citas";
 
         // Crear la solicitud de tipo GET
         JsonObjectRequest request = new JsonObjectRequest(

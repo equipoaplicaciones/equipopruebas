@@ -106,8 +106,8 @@ public class DetallesCitaActivity extends AppCompatActivity {
             Toast.makeText(this, "ID de la cita no encontrado", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        String url = "http://192.168.100.110:5001/api/citas/" + citaId;
+        String url = "http://10.0.2.2:5001/api/citas/" + citaId;
+        //String url = "http://192.168.100.110:5001/api/citas/" + citaId;
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE, url, null,
                 response -> {

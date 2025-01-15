@@ -1,5 +1,8 @@
 package com.example.git_practica;
 import com.android.volley.Response;
+
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -20,6 +23,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,6 +43,11 @@ public class AgendarCitaActivity extends AppCompatActivity {
         editTextHora = findViewById(R.id.editTextHora);
         editTextDescripcion = findViewById(R.id.editTextDescripcion);
         btnGuardarCita = findViewById(R.id.btnGuardarCita);
+        // Agregar DatePicker al campo de fecha
+        editTextFecha.setOnClickListener(v -> showDatePickerDialog());
+
+        // Agregar TimePicker al campo de hora
+        editTextHora.setOnClickListener(v -> showTimePickerDialog());
 
         SharedPreferences sharedPreferences = getSharedPreferences("UsuarioPrefs", MODE_PRIVATE);
         String userId = sharedPreferences.getString("MONGO_ID", null);
@@ -73,8 +82,8 @@ public class AgendarCitaActivity extends AppCompatActivity {
                 return;
             }
 
-            //String url = "http://10.0.2.2:5001/api/citas/" + userId; // Incluir userId en la URL
-            String url = "http://192.168.100.110:5001/api/citas/" + userId;
+            String url = "http://10.0.2.2:5001/api/citas/" + userId; // Incluir userId en la URL
+            //String url = "http://192.168.100.110:5001/api/citas/" + userId;
 
             // Crear una solicitud JSON con el encabezado de autorización
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, cita,
@@ -113,11 +122,40 @@ public class AgendarCitaActivity extends AppCompatActivity {
             Volley.newRequestQueue(this).add(request);
         });
     }
+    private void showDatePickerDialog() {
+        final Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+                (view, year1, month1, dayOfMonth) -> {
+                    // Ajustar el formato a YYYY-MM-DD
+                    String selectedDate = String.format("%04d-%02d-%02d", year1, month1 + 1, dayOfMonth);
+                    editTextFecha.setText(selectedDate);
+                }, year, month, day);
+
+        datePickerDialog.show();
+    }
+
+    private void showTimePickerDialog() {
+        final Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+
+        TimePickerDialog timePickerDialog = new TimePickerDialog(this,
+                (view, hourOfDay, minute1) -> {
+                    String selectedTime = String.format("%02d:%02d", hourOfDay, minute1);
+                    editTextHora.setText(selectedTime);
+                }, hour, minute, true);
+
+        timePickerDialog.show();
+    }
 
     // Método para descargar el PDF
     private void downloadPdf(String citaId, String token) {
-        //String pdfUrl = "http://10.0.2.2:5001/api/citas/" + citaId + "/descargar"; // URL para descargar el PDF con citaId
-        String pdfUrl = "http://192.168.100.110:5001/api/citas/" + citaId + "/descargar";
+        String pdfUrl = "http://10.0.2.2:5001/api/citas/" + citaId + "/descargar"; // URL para descargar el PDF con citaId
+        //String pdfUrl = "http://192.168.100.110:5001/api/citas/" + citaId + "/descargar";
 
 
         // Realizar una solicitud para descargar el archivo PDF

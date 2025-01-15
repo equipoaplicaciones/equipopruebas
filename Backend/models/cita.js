@@ -19,6 +19,13 @@ const citaSchema = new mongoose.Schema({
         type: String,
         required: [true, 'La hora es obligatoria'],
         match: [/^\d{2}:\d{2}$/, 'Formato de hora inválido (HH:mm)'], // Valida formato HH:mm
+        validate: {
+            validator: (value) => {
+                const minutos = parseInt(value.split(":")[1], 10);
+                return minutos === 0 || minutos === 30; // Valida que la hora sea en múltiplos de 30 minutos
+            },
+            message: 'La hora debe ser un múltiplo de 30 minutos (ej. 9:00, 9:30, etc.)'
+        }
     },
     descripcion: {
         type: String,
@@ -45,7 +52,7 @@ citaSchema.index({ fecha: 1, usuarioId: 1 }); // Optimiza búsquedas por fecha y
 // Pre-guardado: Verificar si la cita ya existe
 citaSchema.pre('save', async function(next) {
     const cita = this;
-    
+
     // Verificar si ya existe una cita para el mismo usuario en la misma fecha y hora
     const citaExistente = await mongoose.models.Cita.findOne({
         usuarioId: cita.usuarioId,
