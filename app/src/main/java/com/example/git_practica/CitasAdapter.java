@@ -63,7 +63,8 @@ public class CitasAdapter extends RecyclerView.Adapter<CitasAdapter.CitaViewHold
             fechaTextView = itemView.findViewById(R.id.fechaCita);
             horaTextView = itemView.findViewById(R.id.horaCita);
             descripcionTextView = itemView.findViewById(R.id.descripcionCita);
-            // No inicializas el botón aquí, ya que no está en el layout para los usuarios
+
+            // No se inicializa el botón aquí, ya que no está en el layout para los usuarios !!!
         }
     }
 }
