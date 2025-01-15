@@ -23,7 +23,7 @@ public class CitasAdapter extends RecyclerView.Adapter<CitasAdapter.CitaViewHold
     public CitasAdapter(List<Cita> citasList) {
         this.citasList = citasList;
     }
-
+//csc
     @Override
     public CitaViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // Inflar el layout solo con los elementos necesarios para el usuario (sin botón)

@@ -5,7 +5,7 @@ public class Cita {
     private String fecha;
     private String hora;
     private String descripcion;
-
+//k
     public Cita(String nombre, String fecha, String hora, String descripcion) {
         this.nombre = nombre;
         this.fecha = fecha;
