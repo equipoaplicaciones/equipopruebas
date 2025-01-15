@@ -1,5 +1,6 @@
 package com.example.git_practica;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -33,7 +34,7 @@ import android.widget.TimePicker;
 public class DetallesCitaActivity extends AppCompatActivity {
 
     private TextView detalleNombre, detalleFecha, detalleHora, detalleDescripcion;
-    private Button btnCancelarCita, btnPosponerCita, btnConfirmarPosponer;
+    private Button btnCancelarCita, btnPosponerCita, btnConfirmarPosponer, btnAceptarCita;
     private DatePicker datePicker;
     private TimePicker timePicker;
 
@@ -49,6 +50,7 @@ public class DetallesCitaActivity extends AppCompatActivity {
         btnCancelarCita = findViewById(R.id.btnCancelarCita);
         btnPosponerCita = findViewById(R.id.btnPosponerCita);
         btnConfirmarPosponer = findViewById(R.id.btnConfirmarPosponer);
+        btnAceptarCita = findViewById(R.id.btnAceptarCita);
         datePicker = findViewById(R.id.datePicker);
         timePicker = findViewById(R.id.timePicker);
 
@@ -92,6 +94,9 @@ public class DetallesCitaActivity extends AppCompatActivity {
             btnConfirmarPosponer.setVisibility(View.GONE);
             btnPosponerCita.setVisibility(View.VISIBLE);
         });
+
+        btnAceptarCita.setOnClickListener(v -> aceptarCita());
+
     }
 
     private void cancelarCita() {
@@ -107,13 +112,18 @@ public class DetallesCitaActivity extends AppCompatActivity {
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE, url, null,
                 response -> {
                     Toast.makeText(this, "Cita cancelada exitosamente", Toast.LENGTH_SHORT).show();
-                    finish();
+
+                    // Redirigir a InterfazAdminActivity
+                    Intent intent = new Intent(DetallesCitaActivity.this, InterfazAdminActivity.class);
+                    startActivity(intent);
+                    finish();  // Terminar la actividad actual
                 },
                 error -> Toast.makeText(this, "Error al cancelar la cita", Toast.LENGTH_SHORT).show());
 
         RequestQueue queue = Volley.newRequestQueue(this);
         queue.add(request);
     }
+
 
     private void posponerCita(Date nuevaFechaHora) {
         String citaId = getIntent().getStringExtra("citaId");
@@ -140,7 +150,14 @@ public class DetallesCitaActivity extends AppCompatActivity {
             String url = "http://192.168.100.110:5001/api/citas/" + citaId;
 
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, url, citaActualizada,
-                    response -> Toast.makeText(this, "Cita pospuesta exitosamente", Toast.LENGTH_SHORT).show(),
+                    response -> {
+                        Toast.makeText(this, "Cita pospuesta exitosamente", Toast.LENGTH_SHORT).show();
+
+                        // Redirigir a InterfazAdminActivity
+                        Intent intent = new Intent(DetallesCitaActivity.this, InterfazAdminActivity.class);
+                        startActivity(intent);
+                        finish();  // Terminar la actividad actual
+                    },
                     error -> Toast.makeText(this, "Error al posponer la cita", Toast.LENGTH_SHORT).show()) {
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
@@ -158,4 +175,60 @@ public class DetallesCitaActivity extends AppCompatActivity {
             Toast.makeText(this, "Error al crear el JSON", Toast.LENGTH_SHORT).show();
         }
     }
+
+
+    private void aceptarCita() {
+        String citaId = getIntent().getStringExtra("citaId");
+
+        if (citaId == null || citaId.isEmpty()) {
+            Toast.makeText(this, "ID de la cita no encontrado", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        JSONObject citaAceptada = new JSONObject();
+        try {
+            citaAceptada.put("nuevoEstado", "Aceptada");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error al preparar los datos", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String url = "http://192.168.100.110:5001/api/" + citaId + "/estado";
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, url, citaAceptada,
+                response -> {
+                    Toast.makeText(this, "Cita aceptada exitosamente", Toast.LENGTH_SHORT).show();
+
+                    // Redirigir a InterfazAdminActivity
+                    Intent intent = new Intent(DetallesCitaActivity.this, InterfazAdminActivity.class);
+                    startActivity(intent);
+                    finish();  // Terminar la actividad actual
+                },
+                error -> {
+                    if (error.networkResponse != null && error.networkResponse.data != null) {
+                        try {
+                            String errorMessage = new String(error.networkResponse.data, "UTF-8");
+                            Toast.makeText(this, "Error: " + errorMessage, Toast.LENGTH_SHORT).show();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Toast.makeText(this, "Error desconocido", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(this, "Error al aceptar la cita", Toast.LENGTH_SHORT).show();
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json");
+                return headers;
+            }
+        };
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(request);
+    }
+
+
 }

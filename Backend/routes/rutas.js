@@ -108,25 +108,38 @@ router.get('/api/citas/:fecha', async (req, res) => {
     }
   });
 
-  router.put('/:id/estado', async (req, res) => {
+router.put('/api/:id/estado', async (req, res) => {
     const { id } = req.params;
     const { nuevoEstado } = req.body;
   
     try {
-      const cita = await Cita.findById(id);
-      if (!cita) {
+      // Verificar si el nuevoEstado es válido
+      const estadosValidos = ["Pendiente", "Aceptada", "Pospuesta", "Cancelada"];
+      if (!estadosValidos.includes(nuevoEstado)) {
+        return res.status(400).json({ 
+          mensaje: `El estado '${nuevoEstado}' no es válido. Los valores permitidos son: ${estadosValidos.join(", ")}` 
+        });
+      }
+  
+      // Buscar y actualizar la cita en un solo paso
+      const citaActualizada = await Cita.findByIdAndUpdate(
+        id,
+        { status: nuevoEstado }, // Actualiza solo el estado
+        { new: true, runValidators: true } // Devuelve la cita actualizada y aplica validaciones
+      );
+  
+      if (!citaActualizada) {
         return res.status(404).json({ mensaje: 'Cita no encontrada' });
       }
   
-      // Actualizar el estado
-      cita.status = nuevoEstado;
-      await cita.save();
-  
-      res.json({ mensaje: 'Estado actualizado correctamente', cita });
+      res.json({ mensaje: 'Estado actualizado correctamente', cita: citaActualizada });
     } catch (error) {
-      res.status(500).json({ mensaje: 'Error al actualizar el estado', error });
+      console.error('Error detallado:', error); // Log para depuración
+      res.status(500).json({ mensaje: 'Error al actualizar el estado', detalle: error.message });
     }
   });
+  
+  
 
 router.get('/api/usuario/:id/citas', async (req, res) => {
     try {
