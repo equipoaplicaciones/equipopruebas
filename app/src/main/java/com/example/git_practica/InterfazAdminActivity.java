@@ -50,28 +50,61 @@ public class InterfazAdminActivity extends AppCompatActivity {
     }
 
     private void fetchCitas() {
-        //String url = "http://10.0.2.2:5001/api/citas";
         String url = "http://192.168.100.110:5001/api/citas";
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {
                     try {
-                        JSONArray citasArray = response.getJSONArray("citas");
+                        // Verificar la respuesta completa
+                        Log.d("FetchCitas", "Respuesta JSON: " + response.toString());
 
-                        for (int i = 0; i < citasArray.length(); i++) {
-                            JSONObject cita = citasArray.getJSONObject(i);
+                        // Asegurarse de que la respuesta contenga el array "citas"
+                        if (response.has("citas")) {
+                            JSONArray citasArray = response.getJSONArray("citas");
 
-                            String id = cita.getString("_id"); // Asegúrate de que "_id" coincide con el campo en tu API
-                            String nombre = cita.getString("nombre");
-                            String fecha = cita.getString("fecha");
-                            String hora = cita.getString("hora");
-                            String descripcion = cita.getString("descripcion");
+                            for (int i = 0; i < citasArray.length(); i++) {
+                                JSONObject cita = citasArray.getJSONObject(i);
+                                String id = cita.getString("_id");
+                                // Obtener los campos del JSON
+                                String nombre = cita.getString("nombre");
+                                String motivoCita = cita.getString("motivo");
+                                String fecha = cita.getString("fecha");
+                                String hora = cita.getString("hora");
+                                String status = cita.getString("status");
+                                String genero = cita.getString("genero");
+                                String edadStr = cita.getString("edad");  // Edad como String
+                                String telefono = cita.getString("telefono");
+                                String estadoCivil = cita.getString("estadoCivil");
+                                String domicilio = cita.getString("domicilio");
+                                String email = cita.getString("email");
+                                String comentarios = cita.getString("comentarios");
 
-                            // Agregar la cita con su ID
-                            citasList.add(new Cita(id, nombre, fecha, hora, descripcion));
+                                // Conversión de edad a int
+                                int edad = Integer.parseInt(edadStr);
+
+                                // Agregar logs para verificar los valores
+                                Log.d("FetchCitas", "Cita recibida: " +
+                                        "Nombre: " + nombre + ", Motivo: " + motivoCita + ", Fecha: " + fecha +
+                                        ", Hora: " + hora + ", Status: " + status +
+                                        ", Género: " + genero + ", Edad: " + edad +
+                                        ", Teléfono: " + telefono + ", Estado Civil: " + estadoCivil +
+                                        ", Domicilio: " + domicilio + ", Email: " + email +
+                                        ", Comentarios: " + comentarios);
+
+                                // Crear una nueva instancia de Cita con los datos del JSON
+                                Cita nuevaCita = new Cita(id,
+                                        nombre, motivoCita, fecha, hora, status, genero,
+                                        edad, telefono, estadoCivil, domicilio, email, comentarios
+                                );
+
+                                // Agregar la cita a la lista
+                                citasList.add(nuevaCita);
+                            }
+
+                            citasAdapter.notifyDataSetChanged(); // Notificar al adaptador para actualizar la vista
+                        } else {
+                            Log.e("FetchCitas", "No se encontró el campo 'citas' en la respuesta.");
                         }
-
-                        citasAdapter.notifyDataSetChanged(); // Notificar al adaptador para actualizar la vista
 
                     } catch (JSONException e) {
                         Toast.makeText(InterfazAdminActivity.this, "Error procesando datos del servidor", Toast.LENGTH_SHORT).show();
@@ -86,6 +119,7 @@ public class InterfazAdminActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(this);
         queue.add(jsonObjectRequest);
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

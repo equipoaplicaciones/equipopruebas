@@ -36,10 +36,9 @@ public class CitasAdapter extends RecyclerView.Adapter<CitasAdapter.CitaViewHold
         Cita cita = citasList.get(position);
 
         // Configurar los datos de la cita en las vistas
-        holder.nombreTextView.setText(cita.getNombre());
+        holder.motivoTextView.setText(cita.getMotivoCita());
         holder.fechaTextView.setText(cita.getFecha());
         holder.horaTextView.setText(cita.getHora());
-        holder.descripcionTextView.setText(cita.getDescripcion());
 
         // Cambiar el color de la tarjeta según el estado
         if (cita.getStatus() != null) {
@@ -71,17 +70,15 @@ public class CitasAdapter extends RecyclerView.Adapter<CitasAdapter.CitaViewHold
 
     public static class CitaViewHolder extends RecyclerView.ViewHolder {
 
-        TextView nombreTextView, fechaTextView, horaTextView, descripcionTextView;
+        TextView motivoTextView, fechaTextView, horaTextView;
         CardView cardView;
 
         public CitaViewHolder(@NonNull View itemView) {
             super(itemView);
-            nombreTextView = itemView.findViewById(R.id.nombreCita);
+            motivoTextView = itemView.findViewById(R.id.motivoCita);
             fechaTextView = itemView.findViewById(R.id.fechaCita);
             horaTextView = itemView.findViewById(R.id.horaCita);
-            descripcionTextView = itemView.findViewById(R.id.descripcionCita);
             cardView = itemView.findViewById(R.id.cardView); // Obtener referencia a la CardView
-
         }
     }
 }

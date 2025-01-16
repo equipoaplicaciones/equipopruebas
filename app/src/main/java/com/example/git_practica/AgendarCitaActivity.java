@@ -1,6 +1,6 @@
 package com.example.git_practica;
-import com.android.volley.Response;
 
+import com.android.volley.Response;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-// Asegúrate de que esta importación esté presente
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -20,7 +19,6 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import org.json.JSONObject;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Calendar;
@@ -29,20 +27,31 @@ import java.util.Map;
 
 public class AgendarCitaActivity extends AppCompatActivity {
 
-    private EditText editTextNombre, editTextFecha, editTextHora, editTextDescripcion;
+    private EditText editTextNombre, editTextMotivo, editTextFecha, editTextHora, editTextGenero,
+            editTextEdad, editTextTelefono, editTextEstadoCivil, editTextDomicilio,
+            editTextEmail, editTextComentarios;
     private Button btnGuardarCita;
-    private byte[] pdfData; // Variable global para almacenar los datos del PDF descargado
-//implementacion del calendario
+    private byte[] pdfData;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_agendar_cita);
 
+        // Inicialización de campos EditText
         editTextNombre = findViewById(R.id.editTextNombre);
+        editTextMotivo = findViewById(R.id.editTextMotivoCita);
         editTextFecha = findViewById(R.id.editTextFecha);
         editTextHora = findViewById(R.id.editTextHora);
-        editTextDescripcion = findViewById(R.id.editTextDescripcion);
+        editTextGenero = findViewById(R.id.editTextGenero);
+        editTextEdad = findViewById(R.id.editTextEdad);
+        editTextTelefono = findViewById(R.id.editTextTelefono);
+        editTextEstadoCivil = findViewById(R.id.editTextEstadoCivil);
+        editTextDomicilio = findViewById(R.id.editTextDomicilio);
+        editTextEmail = findViewById(R.id.editTextEmail);
+        editTextComentarios = findViewById(R.id.editTextComentarios);
         btnGuardarCita = findViewById(R.id.btnGuardarCita);
+
         // Agregar DatePicker al campo de fecha
         editTextFecha.setOnClickListener(v -> showDatePickerDialog());
 
@@ -60,11 +69,20 @@ public class AgendarCitaActivity extends AppCompatActivity {
 
         btnGuardarCita.setOnClickListener(v -> {
             String nombre = editTextNombre.getText().toString().trim();
+            String motivo = editTextMotivo.getText().toString().trim();
             String fecha = editTextFecha.getText().toString().trim();
             String hora = editTextHora.getText().toString().trim();
-            String descripcion = editTextDescripcion.getText().toString().trim();
+            String genero = editTextGenero.getText().toString().trim();
+            String edad = editTextEdad.getText().toString().trim();
+            String telefono = editTextTelefono.getText().toString().trim();
+            String estadoCivil = editTextEstadoCivil.getText().toString().trim();
+            String domicilio = editTextDomicilio.getText().toString().trim();
+            String email = editTextEmail.getText().toString().trim();
+            String comentarios = editTextComentarios.getText().toString().trim();
 
-            if (nombre.isEmpty() || fecha.isEmpty() || hora.isEmpty() || descripcion.isEmpty()) {
+            if (nombre.isEmpty() || motivo.isEmpty() || fecha.isEmpty() || hora.isEmpty() || genero.isEmpty() ||
+                    edad.isEmpty() || telefono.isEmpty() || estadoCivil.isEmpty() || domicilio.isEmpty() ||
+                    email.isEmpty() || comentarios.isEmpty()) {
                 Toast.makeText(AgendarCitaActivity.this, "Por favor, complete todos los campos", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -73,32 +91,33 @@ public class AgendarCitaActivity extends AppCompatActivity {
             JSONObject cita = new JSONObject();
             try {
                 cita.put("nombre", nombre);
+                cita.put("motivo", motivo);
                 cita.put("fecha", fecha);
                 cita.put("hora", hora);
-                cita.put("descripcion", descripcion);
+                cita.put("genero", genero);
+                cita.put("edad", edad);
+                cita.put("telefono", telefono);
+                cita.put("estadoCivil", estadoCivil);
+                cita.put("domicilio", domicilio);
+                cita.put("email", email);
+                cita.put("comentarios", comentarios);
             } catch (Exception e) {
                 e.printStackTrace();
                 Toast.makeText(this, "Error al crear los datos de la cita", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            String url = "http://10.0.2.2:5001/api/citas/" + userId; // Incluir userId en la URL
-            //String url = "http://192.168.100.110:5001/api/citas/" + userId;
+            //String url = "http://10.0.2.2:5001/api/citas/" + userId;
+            String url = "http://192.168.100.110:5001/api/citas/" + userId;
 
             // Crear una solicitud JSON con el encabezado de autorización
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, cita,
                     response -> {
                         Toast.makeText(AgendarCitaActivity.this, "Cita agendada exitosamente", Toast.LENGTH_SHORT).show();
-
-                        // Imprimir la respuesta para depuración
                         Log.d("AgendarCitaActivity", "Respuesta de la API: " + response.toString());
-
-                        // Acceder al objeto 'cita' y obtener el '_id'
                         try {
                             JSONObject citaObject = response.getJSONObject("cita");
-                            String citaId = citaObject.getString("_id"); // Obtener _id de la respuesta
-
-                            // Llamar al método para descargar el PDF
+                            String citaId = citaObject.getString("_id");
                             downloadPdf(citaId, token);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -111,17 +130,16 @@ public class AgendarCitaActivity extends AppCompatActivity {
 
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
-                    // Agregar el token en los encabezados de la solicitud
                     Map<String, String> headers = new HashMap<>();
                     headers.put("Authorization", "Bearer " + token);
                     return headers;
                 }
             };
 
-            // Realizar la solicitud
             Volley.newRequestQueue(this).add(request);
         });
     }
+
     private void showDatePickerDialog() {
         final Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -130,7 +148,6 @@ public class AgendarCitaActivity extends AppCompatActivity {
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(this,
                 (view, year1, month1, dayOfMonth) -> {
-                    // Ajustar el formato a YYYY-MM-DD
                     String selectedDate = String.format("%04d-%02d-%02d", year1, month1 + 1, dayOfMonth);
                     editTextFecha.setText(selectedDate);
                 }, year, month, day);
@@ -152,13 +169,10 @@ public class AgendarCitaActivity extends AppCompatActivity {
         timePickerDialog.show();
     }
 
-    // Método para descargar el PDF
     private void downloadPdf(String citaId, String token) {
-        String pdfUrl = "http://10.0.2.2:5001/api/citas/" + citaId + "/descargar"; // URL para descargar el PDF con citaId
-        //String pdfUrl = "http://192.168.100.110:5001/api/citas/" + citaId + "/descargar";
+        //String pdfUrl = "http://10.0.2.2:5001/api/citas/" + citaId + "/descargar";
+        String pdfUrl = "http://192.168.100.110:5001/api/citas/" + citaId + "/descargar";
 
-
-        // Realizar una solicitud para descargar el archivo PDF
         Request<byte[]> downloadRequest = new Request<byte[]>(Request.Method.GET, pdfUrl,
                 error -> {
                     Toast.makeText(AgendarCitaActivity.this, "Error al descargar el PDF", Toast.LENGTH_SHORT).show();
@@ -166,19 +180,13 @@ public class AgendarCitaActivity extends AppCompatActivity {
 
             @Override
             protected com.android.volley.Response<byte[]> parseNetworkResponse(NetworkResponse response) {
-                // Extraemos los datos binarios de la respuesta
                 byte[] data = response.data;
-
-                // Retornamos la respuesta exitosa con los datos binarios y los encabezados de la caché
                 return Response.success(data, HttpHeaderParser.parseCacheHeaders(response));
             }
 
             @Override
             protected void deliverResponse(byte[] response) {
-                // Guardamos los datos PDF en pdfData
                 pdfData = response;
-
-                // Llama al método para pedir al usuario dónde guardar el archivo PDF
                 pickFileToSavePdf();
             }
 
@@ -190,38 +198,27 @@ public class AgendarCitaActivity extends AppCompatActivity {
             }
         };
 
-        // Ejecutar la solicitud de descarga
         Volley.newRequestQueue(this).add(downloadRequest);
     }
 
-
-    // Método para pedir al usuario dónde guardar el archivo PDF
     private void pickFileToSavePdf() {
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.setType("application/pdf");
-        intent.putExtra(Intent.EXTRA_TITLE, "cita.pdf"); // Define el nombre del archivo
-        startActivityForResult(intent, 1); // Esto abrirá el selector de archivos
+        intent.putExtra(Intent.EXTRA_TITLE, "cita.pdf");
+        startActivityForResult(intent, 1);
     }
 
-    // onActivityResult donde se obtiene la URI y se guarda el archivo
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 1 && resultCode == RESULT_OK) {
-            Uri uri = data.getData(); // Obtener la URI donde el usuario quiere guardar el archivo
+            Uri uri = data.getData();
 
-            if (uri != null) {
-                // Verificar que pdfData no sea null ni vacío
-                if (pdfData == null || pdfData.length == 0) {
-                    Toast.makeText(AgendarCitaActivity.this, "El archivo PDF está vacío o no se pudo descargar.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                // Escribir el archivo en la ubicación seleccionada
+            if (uri != null && pdfData != null && pdfData.length > 0) {
                 try (OutputStream outputStream = getContentResolver().openOutputStream(uri)) {
                     if (outputStream != null) {
-                        outputStream.write(pdfData); // Escribir el contenido del PDF
+                        outputStream.write(pdfData);
                         Toast.makeText(this, "PDF guardado exitosamente", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(this, "No se pudo abrir la ubicación para guardar el archivo", Toast.LENGTH_SHORT).show();
@@ -231,13 +228,8 @@ public class AgendarCitaActivity extends AppCompatActivity {
                     Toast.makeText(this, "Error al guardar el PDF", Toast.LENGTH_SHORT).show();
                 }
             } else {
-                Toast.makeText(this, "URI no válida", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "El archivo PDF está vacío o no se pudo descargar.", Toast.LENGTH_SHORT).show();
             }
         }
     }
-
 }
-
-
-
-

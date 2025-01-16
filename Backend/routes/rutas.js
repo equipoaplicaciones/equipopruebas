@@ -60,22 +60,59 @@ router.put('/api/usuario/:id', async (req, res) => {
 });
 
 router.post('/api/citas', async (req, res) => {
-    const { usuarioId, nombre, fecha, hora, descripcion } = req.body;
+    const { 
+        nombre,
+        motivo,
+        fecha,
+        hora,
+        genero,
+        edad,
+        telefono,
+        estadoCivil,
+        domicilio,
+        email,
+        comentarios,
+        usuarioId,
+        status
+    } = req.body;
 
     try {
-        console.log("Datos recibidos:", req.body); // Verificar qué datos se reciben
-        const fechaHora = new Date(`${fecha}T${hora}:00`);
+        // Validar que los campos obligatorios estén presentes
+        if (!nombre || !motivo || !fecha || !hora || !genero || !edad || !telefono || !estadoCivil || !domicilio || !email || !usuarioId) {
+            return res.status(400).json({ mensaje: 'Todos los campos obligatorios deben ser completados.' });
+        }
 
-        const nuevaCita = new Cita({ usuarioId, nombre, fecha: fechaHora, hora, descripcion });
+        console.log("Datos recibidos:", req.body); // Debug: verificar los datos recibidos
+
+        // Crear una nueva instancia de cita
+        const nuevaCita = new Cita({
+            nombre,
+            motivo,
+            fecha,
+            hora,
+            genero,
+            edad,
+            telefono,
+            estadoCivil,
+            domicilio,
+            email,
+            comentarios,
+            descripcion,
+            usuarioId,
+            status
+        });
+
+        // Guardar la cita en la base de datos
         const citaGuardada = await nuevaCita.save();
 
-        console.log("Cita guardada:", citaGuardada); // Verificar qué datos se guardan
-        res.status(201).json({ mensaje: 'Cita agendada exitosamente', cita: citaGuardada });
+        console.log("Cita guardada:", citaGuardada); // Debug: verificar la cita guardada
+        res.status(201).json({ mensaje: 'Cita creada exitosamente', cita: citaGuardada });
     } catch (error) {
         console.error("Error al guardar la cita:", error);
-        res.status(500).json({ mensaje: 'Error al agendar la cita', error: error.message });
+        res.status(500).json({ mensaje: 'Error al crear la cita', error: error.message });
     }
 });
+
 
 router.get('/api/citas', async (req, res) => {
     try {
@@ -108,36 +145,35 @@ router.get('/api/citas/:fecha', async (req, res) => {
     }
   });
 
-router.put('/api/:id/estado', async (req, res) => {
-    const { id } = req.params;
-    const { nuevoEstado } = req.body;
+  router.put('/api/citas/:id/estado', async (req, res) => {
+    const { id } = req.params; // Obtener el ID de los parámetros
+    const { nuevoEstado } = req.body; // Obtener el estado desde el cuerpo de la solicitud
   
     try {
-      // Verificar si el nuevoEstado es válido
-      const estadosValidos = ["Pendiente", "Aceptada", "Pospuesta", "Cancelada"];
-      if (!estadosValidos.includes(nuevoEstado)) {
-        return res.status(400).json({ 
-          mensaje: `El estado '${nuevoEstado}' no es válido. Los valores permitidos son: ${estadosValidos.join(", ")}` 
-        });
-      }
+        // Verificar si el nuevoEstado es válido
+        const estadosValidos = ["Pendiente", "Aceptada", "Pospuesta", "Cancelada"];
+        if (!estadosValidos.includes(nuevoEstado)) {
+            return res.status(400).json({ 
+                mensaje: `El estado '${nuevoEstado}' no es válido. Los valores permitidos son: ${estadosValidos.join(", ")}` 
+            });
+        }
   
-      const citaActualizada = await Cita.findByIdAndUpdate(
-        id,
-        { status: nuevoEstado }, 
-        { new: true, runValidators: true } // Devuelve la cita actualizada y aplica validaciones
-      );
+        const citaActualizada = await Cita.findByIdAndUpdate(
+            id,
+            { status: nuevoEstado }, 
+            { new: true, runValidators: true } // Devuelve la cita actualizada y aplica validaciones
+        );
   
-      if (!citaActualizada) {
-        return res.status(404).json({ mensaje: 'Cita no encontrada' });
-      }
+        if (!citaActualizada) {
+            return res.status(404).json({ mensaje: 'Cita no encontrada' });
+        }
   
-      res.json({ mensaje: 'Estado actualizado correctamente', cita: citaActualizada });
+        res.json({ mensaje: 'Estado actualizado correctamente', cita: citaActualizada });
     } catch (error) {
-      console.error('Error detallado:', error); // Log para depuración
-      res.status(500).json({ mensaje: 'Error al actualizar el estado', detalle: error.message });
+        console.error('Error detallado:', error); // Log para depuración
+        res.status(500).json({ mensaje: 'Error al actualizar el estado', detalle: error.message });
     }
-  });
-  
+});
   
 
 router.get('/api/usuario/:id/citas', async (req, res) => {
@@ -219,18 +255,21 @@ const moment = require('moment-timezone');
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
+
 // Ruta para crear una cita
 router.post('/api/citas/:usuarioId', async (req, res) => {
-    const citaId = req.params.id; // ID de la cita
     const usuarioId = req.params.usuarioId; // El usuarioId ahora viene de la URL
-    const { nombre, fecha, hora, descripcion } = req.body;
+    const { 
+        nombre, motivo, fecha, hora, genero, edad, telefono, estadoCivil, 
+        domicilio, email, comentarios 
+    } = req.body;
 
     try {
         // Agregar logs para depurar los datos recibidos
-        console.log('Datos recibidos:', { citaId, nombre, fecha, hora, descripcion, usuarioId });
+        console.log('Datos recibidos:', { nombre, motivo, fecha, hora, genero, edad, telefono, estadoCivil, domicilio, email, comentarios, usuarioId });
 
         // Validar los datos de entrada
-        if (!nombre || !fecha || !hora || !descripcion || !usuarioId) {
+        if (!nombre || !motivo || !fecha || !hora || !genero || !edad || !telefono || !estadoCivil || !domicilio || !email || !comentarios || !usuarioId) {
             return res.status(400).json({ mensaje: 'Todos los campos son obligatorios.' });
         }
 
@@ -254,13 +293,19 @@ router.post('/api/citas/:usuarioId', async (req, res) => {
             return res.status(400).json({ mensaje: 'Ya existe una cita en esa fecha y hora.' });
         }
 
-        // Crear o actualizar la cita
+        // Crear la cita, MongoDB asignará el _id automáticamente
         const nuevaCita = new Cita({
-            _id: citaId,
             nombre,
+            motivo,
             fecha: fechaHora,  // Guardar la fecha sin zona horaria
             hora,
-            descripcion,
+            genero,
+            edad,
+            telefono,
+            estadoCivil,
+            domicilio,
+            email,
+            comentarios,
             usuarioId, // Asociamos el usuarioId correctamente desde la URL
         });
 
@@ -288,12 +333,20 @@ router.post('/api/citas/:usuarioId', async (req, res) => {
         doc.fontSize(18).text('Detalles de la Cita', { underline: true, align: 'center' });
         doc.moveDown();
 
+        // Agregar todos los campos al PDF
         doc.fontSize(14).text(`Nombre: ${nombre}`, { continued: true }).font('Helvetica-Bold');
         doc.text(` ${nombre}`, { font: 'Helvetica' });
 
-        doc.fontSize(12).text(`Fecha: ${fecha}`);
+        doc.fontSize(12).text(`Motivo: ${motivo}`);
+        doc.text(`Fecha: ${fecha}`);
         doc.text(`Hora: ${hora}`);
-        doc.text(`Descripción: ${descripcion}`);
+        doc.text(`Género: ${genero}`);
+        doc.text(`Edad: ${edad}`);
+        doc.text(`Teléfono: ${telefono}`);
+        doc.text(`Estado Civil: ${estadoCivil}`);
+        doc.text(`Domicilio: ${domicilio}`);
+        doc.text(`Correo: ${email}`);
+        doc.text(`Comentarios: ${comentarios}`);
         
         doc.moveDown();
         doc.fillColor('#2196F3').text('Este documento es su pase de entrada a la cita.', { align: 'center', font: 'Helvetica-Bold' });
@@ -328,6 +381,8 @@ router.post('/api/citas/:usuarioId', async (req, res) => {
         res.status(500).json({ mensaje: 'Error al crear la cita.', error: error.message });
     }
 });
+
+
 
 // Ruta para obtener horas disponibles
 router.get('/api/citas/horasDisponibles', async (req, res) => {

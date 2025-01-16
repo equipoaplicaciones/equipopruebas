@@ -31,21 +31,33 @@ public class CitasAdapter2 extends RecyclerView.Adapter<CitasAdapter2.CitaViewHo
     public void onBindViewHolder(CitaViewHolder holder, int position) {
         Cita cita = citasList.get(position);
 
+        // Mostrar los datos en los TextViews
         holder.nombreTextView.setText(cita.getNombre());
+        holder.motivoTextView.setText(cita.getMotivoCita());
         holder.fechaTextView.setText(cita.getFecha());
         holder.horaTextView.setText(cita.getHora());
-        holder.descripcionTextView.setText(cita.getDescripcion());
+        holder.statusTextView.setText(cita.getStatus());  // Agregar el status
 
+        // Configurar el click para ver detalles
         holder.btnVerDetalles.setOnClickListener(v -> {
             // Crear un Intent para iniciar DetallesCitaActivity
             Intent intent = new Intent(v.getContext(), DetallesCitaActivity.class);
 
-            // Pasando dato de la cita c;
+            // Pasar los datos de la cita
+
             intent.putExtra("nombre", cita.getNombre());
+            intent.putExtra("motivo", cita.getMotivoCita());
             intent.putExtra("fecha", cita.getFecha());
             intent.putExtra("hora", cita.getHora());
-            intent.putExtra("descripcion", cita.getDescripcion());
+            intent.putExtra("status", cita.getStatus());  // Pasar el status
             intent.putExtra("citaId", cita.getId());
+            intent.putExtra("genero", cita.getGenero());
+            intent.putExtra("edad", cita.getEdad());
+            intent.putExtra("telefono", cita.getTelefono());
+            intent.putExtra("estadoCivil", cita.getEstadoCivil());
+            intent.putExtra("domicilio", cita.getDomicilio());
+            intent.putExtra("email", cita.getEmail());
+            intent.putExtra("comentarios", cita.getComentarios());
 
             // Iniciar la nueva Activity
             v.getContext().startActivity(intent);
@@ -64,15 +76,16 @@ public class CitasAdapter2 extends RecyclerView.Adapter<CitasAdapter2.CitaViewHo
 
     public class CitaViewHolder extends RecyclerView.ViewHolder {
 
-        TextView nombreTextView, fechaTextView, horaTextView, descripcionTextView;
+        TextView nombreTextView, motivoTextView, fechaTextView, horaTextView, statusTextView;
         Button btnVerDetalles;
 
         public CitaViewHolder(View itemView) {
             super(itemView);
             nombreTextView = itemView.findViewById(R.id.nombreCita);
+            motivoTextView = itemView.findViewById(R.id.motivoCita);
             fechaTextView = itemView.findViewById(R.id.fechaCita);
             horaTextView = itemView.findViewById(R.id.horaCita);
-            descripcionTextView = itemView.findViewById(R.id.descripcionCita);
+            statusTextView = itemView.findViewById(R.id.statusCita);  // Agregar referencia a status
             btnVerDetalles = itemView.findViewById(R.id.btnVerDetalles);
         }
     }

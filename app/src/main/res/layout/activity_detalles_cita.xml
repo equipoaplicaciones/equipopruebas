@@ -20,6 +20,14 @@
             android:paddingBottom="8dp" />
 
         <TextView
+            android:id="@+id/detalleMotivo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Motivo:"
+            android:textSize="16sp"
+            android:paddingBottom="8dp" />
+
+        <TextView
             android:id="@+id/detalleFecha"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -36,10 +44,58 @@
             android:paddingBottom="8dp" />
 
         <TextView
-            android:id="@+id/detalleDescripcion"
+            android:id="@+id/detalleGenero"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Descripción:"
+            android:text="Género:"
+            android:textSize="16sp"
+            android:paddingBottom="8dp" />
+
+        <TextView
+            android:id="@+id/detalleEdad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Edad:"
+            android:textSize="16sp"
+            android:paddingBottom="8dp" />
+
+        <TextView
+            android:id="@+id/detalleTelefono"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Teléfono:"
+            android:textSize="16sp"
+            android:paddingBottom="8dp" />
+
+        <TextView
+            android:id="@+id/detalleEstadoCivil"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Estado Civil:"
+            android:textSize="16sp"
+            android:paddingBottom="8dp" />
+
+        <TextView
+            android:id="@+id/detalleDomicilio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Domicilio:"
+            android:textSize="16sp"
+            android:paddingBottom="8dp" />
+
+        <TextView
+            android:id="@+id/detalleEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Correo:"
+            android:textSize="16sp"
+            android:paddingBottom="8dp" />
+
+        <TextView
+            android:id="@+id/detalleComentarios"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Comentarios:"
             android:textSize="16sp"
             android:paddingBottom="16dp" />
 

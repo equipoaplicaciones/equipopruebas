@@ -51,10 +51,9 @@ public class HistorialCitasActivity extends AppCompatActivity {
 
                         // Crear una nueva instancia de Cita con los datos del JSON
                         Cita nuevaCita = new Cita(
-                                cita.getString("nombre"),
+                                cita.getString("motivoCita"),
                                 cita.getString("fecha"),
-                                cita.getString("hora"),
-                                cita.getString("descripcion")
+                                cita.getString("hora")
                         );
 
                         citasList.add(nuevaCita);  // Agregar la cita a la lista
@@ -72,5 +71,7 @@ public class HistorialCitasActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
 }

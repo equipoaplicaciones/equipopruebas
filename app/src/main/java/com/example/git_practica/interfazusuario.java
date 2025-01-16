@@ -98,7 +98,8 @@ public class interfazusuario extends AppCompatActivity {
     }
 
     private void obtenerCitasUsuario(String userId) {
-        String url = "http://10.0.2.2:5001/api/usuario/" + userId + "/citas";
+        //String url = "http://10.0.2.2:5001/api/usuario/" + userId + "/citas";
+        String url = "http://192.168.100.110:5001/api/usuario/" + userId + "/citas";
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {
@@ -110,17 +111,16 @@ public class interfazusuario extends AppCompatActivity {
                             citasList.clear();
                             for (int i = 0; i < citasArray.length(); i++) {
                                 JSONObject citaObject = citasArray.getJSONObject(i);
-                                String nombre = citaObject.getString("nombre");
+                                String motivo = citaObject.getString("motivo"); // Cambiado de 'nombre' a 'motivo'
                                 String fecha = citaObject.getString("fecha");
                                 String hora = citaObject.getString("hora");
-                                String descripcion = citaObject.getString("descripcion");
                                 String status = citaObject.optString("status", "Pendiente"); // Valor predeterminado
 
                                 // Convertir fecha a formato adecuado
                                 String fechaFormateada = formatDate(fecha);
 
-                                // Crear la cita y agregarla a la lista
-                                Cita cita = new Cita(nombre, fechaFormateada, hora, descripcion, status);
+                                // Crear la cita y agregarla a la lista (eliminada la descripción)
+                                Cita cita = new Cita(motivo, fechaFormateada, hora, status); // Sin 'descripcion'
                                 citasList.add(cita);
                             }
 
@@ -142,6 +142,7 @@ public class interfazusuario extends AppCompatActivity {
 
         Volley.newRequestQueue(this).add(request);
     }
+
 
     // Método para formatear la fecha recibida
     private String formatDate(String dateStr) {

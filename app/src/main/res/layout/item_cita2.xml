@@ -19,6 +19,16 @@
         android:textColor="@color/primaryTextColor"
         android:paddingBottom="4dp" />
 
+    <!-- Motivo de la cita -->
+    <TextView
+        android:id="@+id/motivoCita"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Motivo"
+        android:textSize="14sp"
+        android:textColor="@color/gray"
+        android:paddingBottom="4dp" />
+
     <!-- Fecha de la cita -->
     <TextView
         android:id="@+id/fechaCita"
@@ -39,12 +49,12 @@
         android:textColor="@color/gray"
         android:paddingBottom="2dp" />
 
-    <!-- Descripción de la cita -->
+    <!-- Status de la cita -->
     <TextView
-        android:id="@+id/descripcionCita"
+        android:id="@+id/statusCita"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Descripción"
+        android:text="Status"
         android:textSize="14sp"
         android:textColor="@color/gray"
         android:paddingBottom="8dp" />
