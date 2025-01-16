@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
 public class interfazusuario extends AppCompatActivity {
 
     private RecyclerView recyclerViewCitas;
@@ -40,6 +41,7 @@ public class interfazusuario extends AppCompatActivity {
     private List<Cita> citasList = new ArrayList<>();
     private ImageButton btnAgendarCita; // Cambiado de Button a ImageButton
     private BroadcastReceiver citaReceiver;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +54,7 @@ public class interfazusuario extends AppCompatActivity {
         recyclerViewCitas.setLayoutManager(new LinearLayoutManager(this));
 
         // Inicializar el adaptador con una lista vacía
-        citasAdapter = new CitasAdapter(citasList);
+        citasAdapter = new CitasAdapter(this, citasList);
         recyclerViewCitas.setAdapter(citasAdapter);
 
         String mongodbUserId = getMongodbUserIdFromPreferences();
@@ -109,24 +111,24 @@ public class interfazusuario extends AppCompatActivity {
                             citasList.clear();
                             for (int i = 0; i < citasArray.length(); i++) {
                                 JSONObject citaObject = citasArray.getJSONObject(i);
-                                String nombre = citaObject.getString("nombre");
+                                String motivo = citaObject.getString("motivo"); // Cambiado de 'nombre' a 'motivo'
                                 String fecha = citaObject.getString("fecha");
                                 String hora = citaObject.getString("hora");
-                                String descripcion = citaObject.getString("descripcion");
+                                String status = citaObject.optString("status", "Pendiente"); // Valor predeterminado
 
                                 // Convertir fecha a formato adecuado
                                 String fechaFormateada = formatDate(fecha);
 
-                                // Crear la cita y agregarla a la lista
-                                Cita cita = new Cita(nombre, fechaFormateada, hora, descripcion);
+                                // Crear la cita y agregarla a la lista (eliminada la descripción)
+                                Cita cita = new Cita(motivo, fechaFormateada, hora, status); // Sin 'descripcion'
                                 citasList.add(cita);
                             }
 
                             // Actualizar el adaptador con las nuevas citas
                             citasAdapter.actualizarCitas(citasList);
-                            citasAdapter.notifyDataSetChanged(); // Asegúrate de actualizar la vista
                         } else {
                             Log.d("obtenerCitasUsuario", "No se encontraron citas.");
+                            Toast.makeText(this, "No tienes citas agendadas", Toast.LENGTH_SHORT).show();
                         }
 
                     } catch (Exception e) {
@@ -135,11 +137,12 @@ public class interfazusuario extends AppCompatActivity {
                 },
                 error -> {
                     Log.e("obtenerCitasUsuario", "Error al obtener las citas: ", error);
-                    Toast.makeText(this, "Error al obtener las citas", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Error al obtener las citas, verifica tu conexión", Toast.LENGTH_SHORT).show();
                 });
 
         Volley.newRequestQueue(this).add(request);
     }
+
 
     // Método para formatear la fecha recibida
     private String formatDate(String dateStr) {

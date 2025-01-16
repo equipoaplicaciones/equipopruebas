@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class CitasAdapter2 extends RecyclerView.Adapter<CitasAdapter2.CitaViewHolder> {
-
+//hola
     private List<Cita> citasList;
 
     public CitasAdapter2(List<Cita> citasList) {
