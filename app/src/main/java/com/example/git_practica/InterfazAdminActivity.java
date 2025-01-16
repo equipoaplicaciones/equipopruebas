@@ -48,7 +48,9 @@ public class InterfazAdminActivity extends AppCompatActivity {
     }
 
     private void fetchCitas() {
-        String url = "http://192.168.100.110:5001/api/citas";
+        String url = "http://10.0.2.2:5001/api/citas";
+
+        //String url = "http://192.168.100.110:5001/api/citas";
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {

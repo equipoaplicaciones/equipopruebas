@@ -6,7 +6,8 @@
     android:layout_margin="16dp"
     card_view:cardCornerRadius="12dp"
     card_view:cardElevation="6dp"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:id="@+id/cardView">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,7 +16,6 @@
         android:padding="16dp"
         android:backgroundTint="@color/black">
 
-        <!-- Título de la cita -->
         <TextView
             android:id="@+id/nombreCita"
             android:layout_width="match_parent"
@@ -26,7 +26,6 @@
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
 
-        <!-- Fecha de la cita -->
         <TextView
             android:id="@+id/fechaCita"
             android:layout_width="match_parent"
@@ -36,7 +35,6 @@
             android:textSize="14sp"
             android:layout_marginBottom="4dp" />
 
-        <!-- Hora de la cita -->
         <TextView
             android:id="@+id/horaCita"
             android:layout_width="match_parent"
@@ -46,7 +44,6 @@
             android:textSize="14sp"
             android:layout_marginBottom="8dp" />
 
-        <!-- Descripción -->
         <TextView
             android:id="@+id/descripcionCita"
             android:layout_width="match_parent"
@@ -55,4 +52,5 @@
             android:textColor="@color/black"
             android:textSize="14sp" />
     </LinearLayout>
+
 </androidx.cardview.widget.CardView>

@@ -13,7 +13,7 @@ app.use(express.json());
 // Habilitar CORS para permitir solicitudes desde cualquier origen
 app.use(cors());
 
-// Conexión a MongoDB Atlas
+// conexión a MongoDB (Atlas)
 mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://qwerty:qwerty123@kevin.joqkehr.mongodb.net/dentista?retryWrites=true&w=majority&appName=Kevin', {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -25,7 +25,9 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://qwerty:qwerty123@kevin.
     console.error('Error al conectar a MongoDB Atlas:', error);
 });
 
+
 // Ruta de prueba para verificar el servidor
+
 app.get('/', (req, res) => {
     res.send('¡Servidor Conectado a MongoDB Atlas!');
 });
