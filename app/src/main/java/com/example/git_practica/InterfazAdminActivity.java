@@ -4,27 +4,21 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+import com.google.android.material.button.MaterialButton; // Importar MaterialButton
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
-import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.ServerError;
-import com.android.volley.TimeoutError;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public class InterfazAdminActivity extends AppCompatActivity {
@@ -45,12 +39,19 @@ public class InterfazAdminActivity extends AppCompatActivity {
         recyclerView.setAdapter(citasAdapter);
 
         fetchCitas();
+
+        // Configurar el botón de cerrar sesión
+        MaterialButton btnLogout = findViewById(R.id.btnLogout);
+        btnLogout.setOnClickListener(v -> {
+            Intent intent = new Intent(InterfazAdminActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish(); // Termina la actividad actual
+        });
     }
 
     private void fetchCitas() {
-        String url = "http://10.0.2.2:5001/api/citas";
-
-        //String url = "http://192.168.100.110:5001/api/citas";
+        //String url = "http://10.0.2.2:5001/api/citas";
+        String url = "http://192.168.100.110:5001/api/citas";
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {

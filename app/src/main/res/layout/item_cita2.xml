@@ -1,44 +1,62 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="8dp">
+    android:padding="16dp"
+    android:background="@color/backgroundColor"
+    android:layout_marginBottom="8dp">
 
+    <!-- Nombre de la cita -->
     <TextView
         android:id="@+id/nombreCita"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Nombre de la Cita"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/primaryTextColor"
+        android:paddingBottom="4dp" />
 
+    <!-- Fecha de la cita -->
     <TextView
         android:id="@+id/fechaCita"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Fecha"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:textColor="@color/gray"
+        android:paddingBottom="2dp" />
 
+    <!-- Hora de la cita -->
     <TextView
         android:id="@+id/horaCita"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hora"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:textColor="@color/gray"
+        android:paddingBottom="2dp" />
 
+    <!-- Descripción de la cita -->
     <TextView
         android:id="@+id/descripcionCita"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Descripción"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:textColor="@color/gray"
+        android:paddingBottom="8dp" />
 
-    <Button
+    <!-- Botón para ver detalles -->
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnVerDetalles"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Ver Detalles"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/primary"
+        app:cornerRadius="8dp"
         android:layout_marginTop="8dp" />
-
 </LinearLayout>
