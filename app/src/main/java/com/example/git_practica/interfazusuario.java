@@ -50,7 +50,7 @@ public class interfazusuario extends AppCompatActivity {
 
         recyclerViewCitas = findViewById(R.id.recyclerViewCitas);
         btnAgendarCita = findViewById(R.id.btnAgendarCita); // btnAgendarCita ahora es un ImageButton
-
+//nuevp
         recyclerViewCitas.setLayoutManager(new LinearLayoutManager(this));
 
         // Inicializar el adaptador con una lista vacía
