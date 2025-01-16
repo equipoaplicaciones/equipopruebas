@@ -1,5 +1,5 @@
 package com.example.git_practica;
-
+// adaptadores
 public class Cita {
     private String id;
     private String nombre;
