@@ -121,10 +121,9 @@ router.put('/api/:id/estado', async (req, res) => {
         });
       }
   
-      // Buscar y actualizar la cita en un solo paso
       const citaActualizada = await Cita.findByIdAndUpdate(
         id,
-        { status: nuevoEstado }, // Actualiza solo el estado
+        { status: nuevoEstado }, 
         { new: true, runValidators: true } // Devuelve la cita actualizada y aplica validaciones
       );
   

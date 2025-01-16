@@ -56,7 +56,6 @@ public class DetallesCitaActivity extends AppCompatActivity {
 
         LinearLayout dateTimeLayout = findViewById(R.id.dateTimeLayout);
 
-        // Recibir datos desde el Intent
         if (getIntent() != null) {
             String citaId = getIntent().getStringExtra("citaId");
             String nombre = getIntent().getStringExtra("nombre");
@@ -115,6 +114,7 @@ public class DetallesCitaActivity extends AppCompatActivity {
 
                     // Redirigir a InterfazAdminActivity
                     Intent intent = new Intent(DetallesCitaActivity.this, InterfazAdminActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);  // Esto eliminará todas las actividades anteriores
                     startActivity(intent);
                     finish();  // Terminar la actividad actual
                 },
@@ -123,7 +123,6 @@ public class DetallesCitaActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(this);
         queue.add(request);
     }
-
 
     private void posponerCita(Date nuevaFechaHora) {
         String citaId = getIntent().getStringExtra("citaId");
@@ -155,6 +154,7 @@ public class DetallesCitaActivity extends AppCompatActivity {
 
                         // Redirigir a InterfazAdminActivity
                         Intent intent = new Intent(DetallesCitaActivity.this, InterfazAdminActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);  // Esto eliminará todas las actividades anteriores
                         startActivity(intent);
                         finish();  // Terminar la actividad actual
                     },
@@ -175,7 +175,6 @@ public class DetallesCitaActivity extends AppCompatActivity {
             Toast.makeText(this, "Error al crear el JSON", Toast.LENGTH_SHORT).show();
         }
     }
-
 
     private void aceptarCita() {
         String citaId = getIntent().getStringExtra("citaId");
@@ -202,6 +201,7 @@ public class DetallesCitaActivity extends AppCompatActivity {
 
                     // Redirigir a InterfazAdminActivity
                     Intent intent = new Intent(DetallesCitaActivity.this, InterfazAdminActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);  // Esto eliminará todas las actividades anteriores
                     startActivity(intent);
                     finish();  // Terminar la actividad actual
                 },
@@ -229,6 +229,4 @@ public class DetallesCitaActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(this);
         queue.add(request);
     }
-
-
 }
