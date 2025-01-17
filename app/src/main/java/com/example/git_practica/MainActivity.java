@@ -13,9 +13,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
@@ -37,7 +35,7 @@ import java.net.URLEncoder;
 public class MainActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 123; // Código de solicitud para Google Sign-In
     private FirebaseAuth auth;
-    private GoogleSignInClient googleSignInClient;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,11 +51,9 @@ public class MainActivity extends AppCompatActivity {
                 .requestEmail()
                 .build();
 
-        googleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        // Botón para iniciar sesión con Google
-        Button btnGoogleSignIn = findViewById(R.id.btnGoogleSignIn);
-        btnGoogleSignIn.setOnClickListener(view -> signInWithGoogle());
+
+
 
         // Botón para iniciar sesión con correo y contraseña
         Button btnLogin = findViewById(R.id.button7);
@@ -92,44 +88,11 @@ public class MainActivity extends AppCompatActivity {
         configurarBotonesDeNavegacion();
     }
 
-    // Método para iniciar sesión con Google
-    private void signInWithGoogle() {
-        Intent signInIntent = googleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == RC_SIGN_IN) {
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            try {
-                // Google Sign-In exitoso, autenticar con Firebase
-                GoogleSignInAccount account = task.getResult(ApiException.class);
-                firebaseAuthWithGoogle(account.getIdToken());
-            } catch (ApiException e) {
-                Log.w("MainActivity", "Google sign in failed", e);
-                Toast.makeText(this, "Inicio de sesión con Google falló.", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
 
-    private void firebaseAuthWithGoogle(String idToken) {
-        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-        auth.signInWithCredential(credential)
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        FirebaseUser user = auth.getCurrentUser();
-                        if (user != null) {
-                            guardarUsuarioEnMongoDB(user); // Guardar en MongoDB
-                        }
-                    } else {
-                        Log.w("MainActivity", "signInWithCredential:failure", task.getException());
-                        Toast.makeText(this, "Error de autenticación con Google.", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
+
+
 
     // Método para iniciar sesión con correo y contraseña
     private void iniciarSesion(String email, String password) {

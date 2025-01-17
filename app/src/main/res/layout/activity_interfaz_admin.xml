@@ -20,7 +20,7 @@
         android:textColor="@color/primaryTextColor"
         android:paddingBottom="16dp"/>
 
-    <!-- Divider -->
+    <!-- Divisor -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"

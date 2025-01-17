@@ -98,7 +98,7 @@
             android:text="Comentarios:"
             android:textSize="16sp"
             android:paddingBottom="16dp" />
-
+        <!-- botones a partir de aquí -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAceptarCita"
             android:layout_width="match_parent"
