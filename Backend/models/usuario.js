@@ -16,8 +16,7 @@ const usuarioSchema = new mongoose.Schema({
         minlength: [6, 'La contraseña debe tener al menos 6 caracteres'] // Validación de longitud mínima
     }
 });
-
-// Encriptamos la contraseña antes de guardarla
+//se encripta la contraseña antes de guardarla
 usuarioSchema.pre('save', async function(next) {
     // Verificamos si la contraseña ha sido modificada o es nueva
     if (this.isModified('contrasena')) {

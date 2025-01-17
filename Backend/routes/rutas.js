@@ -11,7 +11,8 @@ router.post('/api/registro', async (req, res) => {
     console.log('Datos recibidos:', req.body); // Verifica que los datos estén llegando
 
     try {
-        // Verifica si ya existe el usuario
+
+        //verifica si el usuario ya existe
         const usuarioExistente = await Usuario.findOne({ email });
         if (usuarioExistente) {
             return res.status(400).json({ mensaje: 'El correo ya está registrado' });

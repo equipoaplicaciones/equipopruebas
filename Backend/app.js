@@ -34,8 +34,8 @@ app.get('/', (req, res) => {
 
 // Rutas principales
 app.use(rutas);
-
-// Iniciar el servidor
+//iniciar el servidor
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
+

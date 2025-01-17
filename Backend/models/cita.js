@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
-
-// Esquema para el modelo de la cita
+//esquema para el modelo de la cita
 const citaSchema = new mongoose.Schema({
     nombre: {
         type: String,
