@@ -1,44 +1,58 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="10dp"
-    android:layout_marginBottom="8dp"
-    android:background="?android:attr/selectableItemBackground">
+    android:layout_margin="16dp"
+    card_view:cardCornerRadius="12dp"
+    card_view:cardElevation="6dp"
+    android:background="@color/white">
 
-    <!-- Nombre de la cita -->
-    <TextView
-        android:id="@+id/textViewNombre"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Nombre de la cita"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:backgroundTint="@color/black">
 
-    <!-- Fecha de la cita -->
-    <TextView
-        android:id="@+id/textViewFecha"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Fecha de la cita"
-        android:textSize="14sp"
-        android:textColor="#777"/>
+        <!-- Título de la cita -->
+        <TextView
+            android:id="@+id/nombreCita"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nombre Cita"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
 
-    <!-- Hora de la cita -->
-    <TextView
-        android:id="@+id/textViewHora"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Hora de la cita"
-        android:textSize="14sp"
-        android:textColor="#777"/>
+        <!-- Fecha de la cita -->
+        <TextView
+            android:id="@+id/fechaCita"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Fecha Cita"
+            android:textColor="@color/cardview_dark_background"
+            android:textSize="14sp"
+            android:layout_marginBottom="4dp" />
 
-    <!-- Descripción de la cita -->
-    <TextView
-        android:id="@+id/textViewDescripcion"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Descripción de la cita"
-        android:textSize="14sp"
-        android:textColor="#777"/>
-</LinearLayout>
+        <!-- Hora de la cita -->
+        <TextView
+            android:id="@+id/horaCita"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hora Cita"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Descripción -->
+        <TextView
+            android:id="@+id/descripcionCita"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Descripción Cita"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

@@ -1,40 +1,118 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@color/white"
+    tools:context=".MainActivity">
 
-    <EditText
-        android:id="@+id/editTextNombre"
+    <!-- Título del formulario -->
+    <TextView
+        android:id="@+id/formTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nombre de la cita"/>
+        android:text="Registro de Cita"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:gravity="center"
+        android:layout_marginBottom="24dp" />
 
-    <EditText
-        android:id="@+id/editTextFecha"
+    <!-- Nombre -->
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Fecha (YYYY-MM-DD)"
-        android:inputType="date"/>
+        android:hint="Nombre del paciente"
+        app:boxBackgroundMode="outline"
+        app:boxStrokeColor="@color/black"
+        app:boxStrokeWidthFocused="2dp">
 
-    <EditText
-        android:id="@+id/editTextHora"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextNombre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapWords" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Fecha -->
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Hora (HH:mm)"
-        android:inputType="time"/>
+        android:hint="Fecha de la cita"
+        app:boxBackgroundMode="outline"
+        app:boxStrokeColor="@color/black"
+        app:boxStrokeWidthFocused="2dp"
+        android:layout_marginTop="16dp">
 
-    <EditText
-        android:id="@+id/editTextDescripcion"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextFecha"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="date"
+            android:focusable="true"
+            android:clickable="true" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <!-- Hora -->
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Descripción"
-        android:maxLength="500"/>
+        android:hint="Hora de la cita"
+        app:boxBackgroundMode="outline"
+        app:boxStrokeColor="@color/black"
+        app:boxStrokeWidthFocused="2dp"
+        android:layout_marginTop="16dp">
 
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextHora"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:clickable="true" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Descripción -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Descripción (opcional)"
+        app:boxBackgroundMode="outline"
+        app:boxStrokeColor="@color/black"
+        app:boxStrokeWidthFocused="2dp"
+        android:layout_marginTop="16dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextDescripcion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:lines="4"
+            android:maxLength="500" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Botón Guardar -->
     <Button
         android:id="@+id/btnGuardarCita"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="#1976BB"
         android:text="Guardar Cita"
-        android:layout_marginTop="20dp"/>
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:elevation="4dp"
+        android:padding="12dp" />
+
+    <!-- Imagen de fondo -->
+    <ImageView
+        android:id="@+id/formBackgroundImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="24dp"
+        android:src="@drawable/logo"
+        android:contentDescription="Imagen decorativa" />
 </LinearLayout>

@@ -51,13 +51,28 @@ dependencies {
 
     // Volley for network requests
     implementation("com.android.volley:volley:1.2.1")
+    implementation("com.android.volley:volley:1.2.1")
 
     // Retrofit for API requests
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation(libs.recyclerview)
+
+    implementation ("androidx.recyclerview:recyclerview:1.2.1")
+
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+
 
     // Testing Libraries
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.0")
+
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")  // Si necesitas convertir JSON a objetos Java
+
+
+    implementation ("com.google.firebase:firebase-auth:21.3.0")
+    implementation ("com.google.android.gms:play-services-auth:20.6.0")
 }

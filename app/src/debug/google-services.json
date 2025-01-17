@@ -12,7 +12,12 @@
           "package_name": "com.example.git_practica"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "532736307586-5p4st1vakd6o7oukjmbmc476ii78je8i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyD2pHYdFtgmDegPSyM5eMw2jtVRCEBBGKY"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "532736307586-5p4st1vakd6o7oukjmbmc476ii78je8i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

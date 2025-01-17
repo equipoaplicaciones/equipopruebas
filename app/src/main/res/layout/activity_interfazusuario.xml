@@ -1,29 +1,92 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:background="@color/white"
+    tools:context=".MainActivity">
 
-    <!-- Título de la actividad -->
-    <TextView
-        android:id="@+id/textViewUsuario"
-        android:layout_width="wrap_content"
+    <!-- Header con avatar del usuario -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Citas del Usuario"
-        android:textSize="20sp"
-        android:layout_marginBottom="20dp"
-        android:textStyle="bold"/>
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:background="@color/primary">
+
+        <ImageView
+            android:id="@+id/avatarUsuario"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/perfil"
+            android:contentDescription="Avatar del Usuario"
+            android:layout_marginEnd="12dp"
+            android:padding="8dp" />
+
+        <TextView
+            android:id="@+id/nombreUsuario"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hola, Kevin"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/white" />
+    </LinearLayout>
 
     <!-- RecyclerView para mostrar las citas -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewCitas"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
-    <Button
-        android:id="@+id/btnAgendarCita"
+        android:layout_height="472dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:padding="8dp"
+        android:scrollbars="vertical" />
+
+    <!-- Footer con botones de navegación -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Agendar Cita"
-        android:layout_marginTop="20dp"/>
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        android:paddingHorizontal="16dp">
+
+        <ImageButton
+            android:id="@+id/btnAgendarCita"
+            android:layout_width="0dp"
+            android:layout_height="25dp"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:srcCompat="@drawable/ic_mostrar_citas" />
+
+        <ImageButton
+            android:id="@+id/imageButton12"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:srcCompat="@drawable/ic_agendar_cita" />
+
+        <ImageButton
+            android:id="@+id/imageButton13"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:srcCompat="@drawable/ubi" />
+
+        <ImageButton
+            android:id="@+id/imageButton14"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:srcCompat="@drawable/perfil" />
+    </LinearLayout>
 </LinearLayout>

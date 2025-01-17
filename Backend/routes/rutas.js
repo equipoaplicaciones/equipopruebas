@@ -28,7 +28,6 @@ router.post('/api/registro', async (req, res) => {
     }
 });
 
-
 // Ruta para obtener un usuario específico por ID
 router.get('/api/usuario/:id', async (req, res) => {
     try {
@@ -64,34 +63,19 @@ router.post('/api/citas', async (req, res) => {
     const { usuarioId, nombre, fecha, hora, descripcion } = req.body;
 
     try {
+        console.log("Datos recibidos:", req.body); // Verificar qué datos se reciben
         const fechaHora = new Date(`${fecha}T${hora}:00`);
 
-        const citaExistente = await Cita.findOne({ usuarioId, fecha: fechaHora });
-        if (citaExistente) {
-            return res.status(400).json({
-                mensaje: 'El usuario ya tiene una cita en la fecha y hora seleccionadas',
-            });
-        }
-
-        const nuevaCita = new Cita({
-            usuarioId,
-            nombre,
-            fecha: fechaHora,
-            hora,
-            descripcion
-        });
-
+        const nuevaCita = new Cita({ usuarioId, nombre, fecha: fechaHora, hora, descripcion });
         const citaGuardada = await nuevaCita.save();
 
-        res.status(201).json({
-            mensaje: 'Cita agendada exitosamente',
-            cita: citaGuardada
-        });
+        console.log("Cita guardada:", citaGuardada); // Verificar qué datos se guardan
+        res.status(201).json({ mensaje: 'Cita agendada exitosamente', cita: citaGuardada });
     } catch (error) {
+        console.error("Error al guardar la cita:", error);
         res.status(500).json({ mensaje: 'Error al agendar la cita', error: error.message });
     }
 });
-
 
 router.get('/api/citas', async (req, res) => {
     try {
@@ -124,36 +108,66 @@ router.get('/api/citas/:fecha', async (req, res) => {
     }
   });
 
-  // Ruta para obtener las citas de un usuario por ID (MongoDB ID)
-  router.get('/api/usuario/:id/citas', async (req, res) => {
+router.put('/api/:id/estado', async (req, res) => {
+    const { id } = req.params;
+    const { nuevoEstado } = req.body;
+  
+    try {
+      // Verificar si el nuevoEstado es válido
+      const estadosValidos = ["Pendiente", "Aceptada", "Pospuesta", "Cancelada"];
+      if (!estadosValidos.includes(nuevoEstado)) {
+        return res.status(400).json({ 
+          mensaje: `El estado '${nuevoEstado}' no es válido. Los valores permitidos son: ${estadosValidos.join(", ")}` 
+        });
+      }
+  
+      // Buscar y actualizar la cita en un solo paso
+      const citaActualizada = await Cita.findByIdAndUpdate(
+        id,
+        { status: nuevoEstado }, // Actualiza solo el estado
+        { new: true, runValidators: true } // Devuelve la cita actualizada y aplica validaciones
+      );
+  
+      if (!citaActualizada) {
+        return res.status(404).json({ mensaje: 'Cita no encontrada' });
+      }
+  
+      res.json({ mensaje: 'Estado actualizado correctamente', cita: citaActualizada });
+    } catch (error) {
+      console.error('Error detallado:', error); // Log para depuración
+      res.status(500).json({ mensaje: 'Error al actualizar el estado', detalle: error.message });
+    }
+  });
+  
+  
+
+router.get('/api/usuario/:id/citas', async (req, res) => {
     try {
         const usuarioId = req.params.id;
 
-        // Verificar que el ID se recibe correctamente
-        console.log("ID del usuario: ", usuarioId);
+        console.log("ID del usuario recibido:", usuarioId);
 
-        const citas = await Cita.find({ usuarioId });
+        // Asegúrate de convertir el usuarioId en ObjectId si es necesario
+        const citas = await Cita.find({ usuarioId }).populate('usuarioId');
 
-        res.status(200).json({
-            total: citas.length,
-            citas
-        });
+        console.log("Citas encontradas:", citas);
+
+        res.status(200).json({ total: citas.length, citas });
     } catch (error) {
-        console.error("Error al obtener las citas:", error); // Verificar el error en el backend
+        console.error("Error al obtener las citas:", error);
         res.status(500).json({ mensaje: 'Error al obtener las citas del usuario', error: error.message });
     }
 });
 
-
-
 router.put('/api/citas/:id', async (req, res) => {
     try {
-        const { nombre, fecha, hora, descripcion } = req.body;
+        const { fecha, hora } = req.body;
         const fechaHora = new Date(`${fecha}T${hora}:00`);
 
+        // Buscar la cita y actualizar solo la fecha y la hora
         const citaActualizada = await Cita.findByIdAndUpdate(
             req.params.id,
-            { nombre, fecha: fechaHora, hora, descripcion },
+            { fecha: fechaHora, hora },
             { new: true }
         );
 
@@ -169,6 +183,7 @@ router.put('/api/citas/:id', async (req, res) => {
         res.status(500).json({ mensaje: 'Error al actualizar la cita', error: error.message });
     }
 });
+
 
 router.delete('/api/citas/:id', async (req, res) => {
     try {
@@ -201,51 +216,139 @@ router.get('/api/usuario/mongodb/:email', async (req, res) => {
         res.status(500).json({ mensaje: 'Error al obtener el ID de MongoDB', error: error.message });
     }
 });
-
-router.post('/api/citas/:id', async (req, res) => {
-    const usuarioId = req.params.id; // ID del usuario desde la URL
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
+const path = require('path');
+router.post('/api/citas/:usuarioId', async (req, res) => {
+    const citaId = req.params.id; // ID de la cita
+    const usuarioId = req.params.usuarioId; // El usuarioId ahora viene de la URL
     const { nombre, fecha, hora, descripcion } = req.body;
 
     try {
+        console.log('Datos recibidos:', { citaId, nombre, fecha, hora, descripcion, usuarioId });
+
+        // Validar los datos de entrada
+        if (!nombre || !fecha || !hora || !descripcion || !usuarioId) {
+            return res.status(400).json({ mensaje: 'Todos los campos son obligatorios.' });
+        }
+
         const fechaHora = new Date(`${fecha}T${hora}:00`);
-
-        // Validar si el usuario existe (opcional)
-        const usuario = await Usuario.findById(usuarioId);
-        if (!usuario) {
-            return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+        if (isNaN(fechaHora.getTime())) {
+            return res.status(400).json({ mensaje: 'Fecha u hora inválidas.' });
         }
 
-        // Validar si ya existe una cita en esa fecha y hora para el usuario
-        const citaExistente = await Cita.findOne({ usuarioId, fecha: fechaHora });
+        // Verificar si ya existe una cita en esa fecha y hora
+        const citaExistente = await Cita.findOne({ fecha: fechaHora, usuarioId });
         if (citaExistente) {
-            return res.status(400).json({
-                mensaje: 'El usuario ya tiene una cita en la fecha y hora seleccionadas',
-            });
+            console.log('Cita ya existente');
+            return res.status(400).json({ mensaje: 'Ya existe una cita en esa fecha y hora.' });
         }
 
-        // Crear una nueva cita
+        // Crear o actualizar la cita
         const nuevaCita = new Cita({
-            usuarioId,
+            _id: citaId,
             nombre,
             fecha: fechaHora,
             hora,
             descripcion,
+            usuarioId, // Asociamos el usuarioId correctamente desde la URL
         });
 
         const citaGuardada = await nuevaCita.save();
+        console.log('Cita guardada:', citaGuardada);
 
-        res.status(201).json({
-            mensaje: 'Cita creada exitosamente',
-            cita: citaGuardada,
+        // Crear PDF con los detalles de la cita
+        const pdfDir = path.join(__dirname, 'citas');
+        if (!fs.existsSync(pdfDir)) {
+            fs.mkdirSync(pdfDir, { recursive: true });
+        }
+
+        const pdfPath = path.join(pdfDir, `cita_${citaGuardada._id}.pdf`);
+        console.log('Ruta del PDF:', pdfPath);
+
+        const doc = new PDFDocument({ margin: 50 });
+        const stream = fs.createWriteStream(pdfPath);
+        doc.pipe(stream);
+
+        
+
+        // Título con color y margen
+        doc.fontSize(24).fillColor('#4CAF50').text('Comprobante de Cita', { align: 'center' });
+        doc.moveDown();
+
+        // Detalles de la cita con color y formato
+        doc.fontSize(18).text('Detalles de la Cita', { underline: true, align: 'center' });
+        doc.moveDown();
+
+        doc.fontSize(14).text(`Nombre: ${nombre}`, { continued: true }).font('Helvetica-Bold');
+        doc.text(` ${nombre}`, { font: 'Helvetica' });
+
+        doc.fontSize(12).text(`Fecha: ${fecha}`);
+        doc.text(`Hora: ${hora}`);
+        doc.text(`Descripción: ${descripcion}`);
+        
+        doc.moveDown();
+        doc.fillColor('#2196F3').text('Este documento es su pase de entrada a la cita.', { align: 'center', font: 'Helvetica-Bold' });
+
+        // Borde alrededor del contenido
+        doc.rect(40, 40, 520, 750).stroke();
+
+        // Sección de firma
+        doc.moveDown().text('Firma del paciente: ____________________', { align: 'left' });
+        doc.text('Firma del consultorio: ____________________', { align: 'right' });
+
+        doc.end();
+
+        stream.on('finish', () => {
+            console.log('PDF generado correctamente');
+            res.status(200).json({
+                mensaje: 'Cita creada exitosamente.',
+                cita: citaGuardada,
+            });
+        });
+
+        stream.on('error', (error) => {
+            console.error('Error al generar el PDF:', error);
+            res.status(500).json({
+                mensaje: 'Cita creada, pero ocurrió un error al generar el PDF.',
+                cita: citaGuardada,
+                error: error.message,
+            });
         });
     } catch (error) {
-        res.status(500).json({ mensaje: 'Error al crear la cita', error: error.message });
+        console.error('Error al crear la cita:', error);
+        res.status(500).json({ mensaje: 'Error al crear la cita.', error: error.message });
     }
 });
 
+router.get('/api/citas/:id/descargar', async (req, res) => {
+    const citaId = req.params.id;
 
+    try {
+        // Verificar si la cita existe
+        const cita = await Cita.findById(citaId);
+        if (!cita) {
+            return res.status(404).json({ mensaje: 'Cita no encontrada.' });
+        }
 
+        const pdfPath = path.join(__dirname, 'citas', `cita_${citaId}.pdf`);
 
+        // Verificar si el archivo PDF existe
+        if (!fs.existsSync(pdfPath)) {
+            return res.status(404).json({ mensaje: 'PDF no encontrado.' });
+        }
 
+        // Enviar el archivo PDF
+        res.download(pdfPath, `cita_${citaId}.pdf`, (err) => {
+            if (err) {
+                console.error('Error al enviar el archivo:', err);
+                res.status(500).json({ mensaje: 'Error al descargar el PDF.', error: err.message });
+            }
+        });
+    } catch (error) {
+        console.error('Error en la descarga del PDF:', error);
+        res.status(500).json({ mensaje: 'Error al procesar la solicitud.', error: error.message });
+    }
+});
 
 module.exports = router;

@@ -13,6 +13,13 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -20,6 +27,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.auth.GoogleAuthProvider;
 
 import org.json.JSONObject;
 import org.json.JSONException;
@@ -27,151 +35,219 @@ import org.json.JSONException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 public class MainActivity extends AppCompatActivity {
+    private static final int RC_SIGN_IN = 123; // Código de solicitud para Google Sign-In
     private FirebaseAuth auth;
-    private CheckBox checkBoxRecordar;
+    private GoogleSignInClient googleSignInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Inicializar Firebase Auth
+        // Inicializar Firebase Auths
         auth = FirebaseAuth.getInstance();
 
-        // Vistas de los campos de entrada y botón de inicio de sesión
-        EditText editEmail = findViewById(R.id.editTextTextEmailAddress);
-        EditText editPassword = findViewById(R.id.editTextTextPassword);
-        Button btnIniciarSesion = findViewById(R.id.button7);
-        checkBoxRecordar = findViewById(R.id.checkBox);
+        // Configurar Google Sign-In
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id)) // Obtén esto desde strings.xml
+                .requestEmail()
+                .build();
 
-        // Eliminar datos anteriores de SharedPreferences para pruebas
-        eliminarDatosSharedPreferences();
+        googleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        // Verificar si el usuario ya está autenticado
-        FirebaseUser currentUser = auth.getCurrentUser();
-        if (currentUser != null) {
-            // Si el usuario está autenticado, obtener el ID de MongoDB y redirigir
-            String userEmail = currentUser.getEmail();
-            obtenerIdMongoDb(userEmail);
-        }
+        // Botón para iniciar sesión con Google
+        Button btnGoogleSignIn = findViewById(R.id.btnGoogleSignIn);
+        btnGoogleSignIn.setOnClickListener(view -> signInWithGoogle());
 
-        // Configurar el botón de inicio de sesión
-        btnIniciarSesion.setOnClickListener(view -> {
-            String email = editEmail.getText().toString().trim();
-            String password = editPassword.getText().toString().trim();
+        // Botón para iniciar sesión con correo y contraseña
+        Button btnLogin = findViewById(R.id.button7);
+        EditText emailField = findViewById(R.id.editTextTextEmailAddress);  // Corregido: falta cerrar el paréntesis
+        EditText passwordField = findViewById(R.id.editTextTextPassword);
+        Button Registro = findViewById(R.id.btnRegistro);
+        ImageButton mapa = findViewById(R.id.imageButton13);
 
-            // Validar los campos
-            if (!email.isEmpty() && !password.isEmpty()) {
-                iniciarSesion(email, password);
-            } else {
-                Toast.makeText(MainActivity.this, "Por favor, completa todos los campos.", Toast.LENGTH_SHORT).show();
-            }
-        });
 
-        // Botón para redirigir a la actividad de registro
-        Button btnRegistro = findViewById(R.id.btnRegistro);
-        btnRegistro.setOnClickListener(view -> {
-            // Crear un Intent para abrir la actividad de registro
-            Intent intent = new Intent(MainActivity.this, RegistroActivity.class);
+
+        Button registro = findViewById(R.id.btnRegistro); // Declaración única
+        registro.setOnClickListener(v -> {
+            Intent intent = new Intent(this, RegistroActivity.class);
             startActivity(intent);
         });
 
-        // Configurar el ImageButton para redirigir a AgendarActivity
-        ImageButton imageButton = findViewById(R.id.imageButton12);
-        imageButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, AgendarActivity.class);
-            startActivity(intent); // Iniciar la nueva actividad
+
+        btnLogin.setOnClickListener(view -> {
+            String email = emailField.getText().toString().trim();
+            String password = passwordField.getText().toString().trim();
+
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Por favor, completa todos los campos.", Toast.LENGTH_SHORT).show();
+            } else {
+                iniciarSesion(email, password);
+            }
         });
+
+
+
+        // Otros botones de navegación
+        configurarBotonesDeNavegacion();
     }
 
-    private void eliminarDatosSharedPreferences() {
-        // Eliminar todos los datos de SharedPreferences
-        SharedPreferences sharedPreferences = getSharedPreferences("userPrefs", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.clear(); // Elimina todos los datos guardados
-        editor.apply();
-        Log.d("MainActivity", "Datos de SharedPreferences eliminados");
+    // Método para iniciar sesión con Google
+    private void signInWithGoogle() {
+        Intent signInIntent = googleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                // Google Sign-In exitoso, autenticar con Firebase
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                firebaseAuthWithGoogle(account.getIdToken());
+            } catch (ApiException e) {
+                Log.w("MainActivity", "Google sign in failed", e);
+                Toast.makeText(this, "Inicio de sesión con Google falló.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void firebaseAuthWithGoogle(String idToken) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+        auth.signInWithCredential(credential)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = auth.getCurrentUser();
+                        if (user != null) {
+                            guardarUsuarioEnMongoDB(user); // Guardar en MongoDB
+                        }
+                    } else {
+                        Log.w("MainActivity", "signInWithCredential:failure", task.getException());
+                        Toast.makeText(this, "Error de autenticación con Google.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    // Método para iniciar sesión con correo y contraseña
     private void iniciarSesion(String email, String password) {
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        // Inicio de sesión exitoso
                         Toast.makeText(MainActivity.this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show();
-
-                        // Obtener el usuario de Firebase
                         FirebaseUser user = auth.getCurrentUser();
                         if (user != null) {
-                            // Obtener el email del usuario de Firebase
                             String userEmail = user.getEmail();
-                            // Llamar al método para obtener el ID de MongoDB
                             obtenerIdMongoDb(userEmail);
+
+                            if ("admin@dentista.com".equals(userEmail)) {
+                                Intent adminIntent = new Intent(MainActivity.this, InterfazAdminActivity.class);
+                                startActivity(adminIntent);
+                                finish();
+                            }
+
+                            user.getIdToken(true).addOnCompleteListener(task1 -> {
+                                if (task1.isSuccessful()) {
+                                    String idToken = task1.getResult().getToken();
+                                    guardarTokenEnSharedPreferences(idToken);
+                                } else {
+                                    Log.e("MainActivity", "Error al recuperar el token: " + task1.getException());
+                                }
+                            });
                         }
                     } else {
-                        // Error al iniciar sesión
                         Toast.makeText(MainActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
-    private void guardarIdEnSharedPreferences(String id) {
-        SharedPreferences sharedPreferences = getSharedPreferences("userPrefs", MODE_PRIVATE);
+    // Guardar token en SharedPreferences
+    private void guardarTokenEnSharedPreferences(String token) {
+        SharedPreferences sharedPreferences = getSharedPreferences("UsuarioPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("MONGO_ID", id);
+        editor.putString("FIREBASE_TOKEN", token);
         editor.apply();
-        Log.d("MainActivity", "ID guardado en SharedPreferences: " + id); // Log para verificar que el ID se guarda
+        Log.d("MainActivity", "Token guardado en SharedPreferences: " + token);
+    }
+
+    private void guardarUsuarioEnMongoDB(FirebaseUser user) {
+        String email = user.getEmail();
+        String name = user.getDisplayName();
+        String photoUrl = (user.getPhotoUrl() != null) ? user.getPhotoUrl().toString() : null;
+
+        Log.d("MainActivity", "Guardando usuario: " + email + ", Nombre: " + name + ", Foto: " + photoUrl);
+        obtenerIdMongoDb(email);
     }
 
     private void obtenerIdMongoDb(String email) {
         try {
-            // Codificar el correo electrónico para evitar errores en la URL
             String encodedEmail = URLEncoder.encode(email, "UTF-8");
-            String url = "http://10.0.2.2:5001/api/usuario/mongodb/" + encodedEmail;
-
-            Log.d("MainActivity", "Solicitando ID de MongoDB con el email: " + email);  // Agregar log
+            //String url = "http://10.0.2.2:5001/api/usuario/mongodb/" + encodedEmail;
+            String url = "http://192.168.100.110:5001/api/usuario/mongodb/" + encodedEmail;
 
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                     response -> {
                         try {
-                            // Verificar que la respuesta contiene el ID esperado
                             if (response.has("mongodbUserId")) {
                                 String mongodbUserId = response.getString("mongodbUserId");
-
-                                Log.d("MainActivity", "ID de MongoDB obtenido: " + mongodbUserId);  // Verificar la respuesta
-
-                                // Guardar el ID en SharedPreferences
                                 guardarIdEnSharedPreferences(mongodbUserId);
 
-                                // Redirigir al usuario con el ID
                                 Intent intent = new Intent(MainActivity.this, interfazusuario.class);
                                 intent.putExtra("MONGO_ID", mongodbUserId);
                                 startActivity(intent);
                                 finish();
                             } else {
-                                Log.d("MainActivity", "No se encontró el ID de MongoDB en la respuesta.");
                                 Toast.makeText(MainActivity.this, "No se encontró el ID del usuario en MongoDB.", Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            Log.d("MainActivity", "Error al procesar la respuesta: " + e.getMessage());
-                            Toast.makeText(MainActivity.this, "Error al procesar la respuesta del servidor.", Toast.LENGTH_SHORT).show();
                         }
                     },
                     error -> {
-                        Log.d("MainActivity", "Error al obtener el ID de MongoDB: " + error.getMessage());  // Log para el error
-                        Toast.makeText(MainActivity.this, "Error al obtener el ID de MongoDB. Revisa tu conexión.", Toast.LENGTH_SHORT).show();
-                        error.printStackTrace();
+                        Toast.makeText(MainActivity.this, "Error al obtener el ID de MongoDB.", Toast.LENGTH_SHORT).show();
                     }
             );
 
-            // Añadir la solicitud a la cola de Volley
             Volley.newRequestQueue(this).add(request);
-
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            Toast.makeText(MainActivity.this, "Error al codificar el correo electrónico.", Toast.LENGTH_SHORT).show();
         }
     }
-}
 
+    private void guardarIdEnSharedPreferences(String id) {
+        SharedPreferences sharedPreferences = getSharedPreferences("UsuarioPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("MONGO_ID", id);
+        editor.apply();
+    }
+
+    // Configuración de botones de navegación
+    private void configurarBotonesDeNavegacion() {
+        ImageButton imageButtonServicios = findViewById(R.id.imageButton12);
+        imageButtonServicios.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ServiciosActivity.class);
+            startActivity(intent);
+        });
+
+        ImageButton imageButtonQuienesSomos = findViewById(R.id.imageButton15);
+        imageButtonQuienesSomos.setOnClickListener(v -> {
+            Intent intent = new Intent(this, QuienesSomosActivity.class);
+            startActivity(intent);
+        });
+
+        ImageButton imageButtonPrivacidad = findViewById(R.id.imageButton14);
+        imageButtonPrivacidad.setOnClickListener(v -> {
+            Intent intent = new Intent(this, PrivacidadActivity.class);
+            startActivity(intent);
+        });
+
+        ImageButton mapa = findViewById(R.id.imageButton13);
+        mapa.setOnClickListener(v -> {
+            Intent intent = new Intent(this, MapsActivity.class);
+            startActivity(intent);
+        });
+
+    }
+}

@@ -15,7 +15,7 @@ import java.util.List;
 
 public class HistorialCitasActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
-    private CitasAdapter citasAdapter;
+    private CitasAdapter2 citasAdapter2;  // Usar CitasAdapter2
     private List<Cita> citasList = new ArrayList<>();
 
     @Override
@@ -26,9 +26,9 @@ public class HistorialCitasActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Usar la lista de objetos Cita
-        citasAdapter = new CitasAdapter(citasList);
-        recyclerView.setAdapter(citasAdapter);
+        // Usar CitasAdapter2 en lugar de CitasAdapter
+        citasAdapter2 = new CitasAdapter2(citasList);
+        recyclerView.setAdapter(citasAdapter2);
 
         obtenerHistorialCitas();
     }
@@ -60,7 +60,7 @@ public class HistorialCitasActivity extends AppCompatActivity {
                         citasList.add(nuevaCita);  // Agregar la cita a la lista
                     }
 
-                    citasAdapter.notifyDataSetChanged();  // Notificar al adaptador que los datos han cambiado
+                    citasAdapter2.notifyDataSetChanged();  // Notificar al adaptador que los datos han cambiado
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

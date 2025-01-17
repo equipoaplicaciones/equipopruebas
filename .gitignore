@@ -1,15 +1,26 @@
+# Archivos y carpetas de Android Studio
 *.iml
 .gradle
 /local.properties
+/.idea/*
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
-.DS_Store
+
+# Archivos y carpetas generados
 /build
 /captures
 .externalNativeBuild
 .cxx
+
+# Dependencias de Node.js
+node_modules/
+
+# Sistema operativo macOS
+.DS_Store
+
+# Archivos específicos del sistema local
 local.properties
