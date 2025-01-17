@@ -29,7 +29,7 @@
                 android:layout_height="241dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="1dp"
-                app:srcCompat="@drawable/logo" />
+                app:srcCompat="@drawable/logodental2" />
 
             <Space
                 android:layout_width="10dp"
@@ -84,15 +84,6 @@
                 android:backgroundTint="#1976BB"
                 android:text="Iniciar Sesión"
                 android:textColor="@color/white" />
-
-            <Button
-                android:id="@+id/btnGoogleSignIn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Iniciar sesión con Google"
-                android:layout_marginTop="16dp"
-                android:backgroundTint="@color/black"
-                android:textColor="@android:color/white" />
 
 
             <!-- Texto de invitación para registrarse -->
