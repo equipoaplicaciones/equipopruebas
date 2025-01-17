@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Inicializar Firebase Auth
+        // Inicializar Firebase Auths
         auth = FirebaseAuth.getInstance();
 
         // Configurar Google Sign-In
@@ -184,8 +184,8 @@ public class MainActivity extends AppCompatActivity {
     private void obtenerIdMongoDb(String email) {
         try {
             String encodedEmail = URLEncoder.encode(email, "UTF-8");
-            String url = "http://10.0.2.2:5001/api/usuario/mongodb/" + encodedEmail;
-            //String url = "http://192.168.100.110:5001/api/usuario/mongodb/" + encodedEmail;
+            //String url = "http://10.0.2.2:5001/api/usuario/mongodb/" + encodedEmail;
+            String url = "http://192.168.100.110:5001/api/usuario/mongodb/" + encodedEmail;
 
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                     response -> {
@@ -251,4 +251,3 @@ public class MainActivity extends AppCompatActivity {
 
     }
 }
-

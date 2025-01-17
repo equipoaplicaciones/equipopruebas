@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -17,17 +16,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -39,9 +33,8 @@ public class interfazusuario extends AppCompatActivity {
     private RecyclerView recyclerViewCitas;
     private CitasAdapter citasAdapter;
     private List<Cita> citasList = new ArrayList<>();
-    private ImageButton btnAgendarCita; // Cambiado de Button a ImageButton
+    private ImageButton btnAgendarCita;
     private BroadcastReceiver citaReceiver;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,11 +42,9 @@ public class interfazusuario extends AppCompatActivity {
         setContentView(R.layout.activity_interfazusuario);
 
         recyclerViewCitas = findViewById(R.id.recyclerViewCitas);
-        btnAgendarCita = findViewById(R.id.btnAgendarCita); // btnAgendarCita ahora es un ImageButton
-//nuevp
-        recyclerViewCitas.setLayoutManager(new LinearLayoutManager(this));
+        btnAgendarCita = findViewById(R.id.btnAgendarCita);
 
-        // Inicializar el adaptador con una lista vacía
+        recyclerViewCitas.setLayoutManager(new LinearLayoutManager(this));
         citasAdapter = new CitasAdapter(this, citasList);
         recyclerViewCitas.setAdapter(citasAdapter);
 
@@ -64,13 +55,11 @@ public class interfazusuario extends AppCompatActivity {
             Toast.makeText(this, "No se pudo obtener el ID de MongoDB", Toast.LENGTH_SHORT).show();
         }
 
-        // Configurar el clic del botón para agendar cita1
         btnAgendarCita.setOnClickListener(v -> {
             Intent intent = new Intent(interfazusuario.this, AgendarCitaActivity.class);
             startActivity(intent);
         });
 
-        // Registrar el BroadcastReceiver para actualizar las citas cuando se agrega una nueva
         citaReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -80,13 +69,13 @@ public class interfazusuario extends AppCompatActivity {
                 }
             }
         };
+
         LocalBroadcastManager.getInstance(this).registerReceiver(citaReceiver, new IntentFilter("CITA_AGREGADA"));
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Desregistrar el BroadcastReceiver
         LocalBroadcastManager.getInstance(this).unregisterReceiver(citaReceiver);
     }
 
@@ -98,7 +87,6 @@ public class interfazusuario extends AppCompatActivity {
     }
 
     private void obtenerCitasUsuario(String userId) {
-        //String url = "http://10.0.2.2:5001/api/usuario/" + userId + "/citas";
         String url = "http://192.168.100.110:5001/api/usuario/" + userId + "/citas";
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
@@ -111,26 +99,20 @@ public class interfazusuario extends AppCompatActivity {
                             citasList.clear();
                             for (int i = 0; i < citasArray.length(); i++) {
                                 JSONObject citaObject = citasArray.getJSONObject(i);
-                                String motivo = citaObject.getString("motivo"); // Cambiado de 'nombre' a 'motivo'
-                                String fecha = citaObject.getString("fecha");
-                                String hora = citaObject.getString("hora");
-                                String status = citaObject.optString("status", "Pendiente"); // Valor predeterminado
+                                String motivo = citaObject.optString("motivo", "Sin motivo");
+                                String fecha = citaObject.optString("fecha", "");
+                                String hora = citaObject.optString("hora", "");
+                                String status = citaObject.optString("status", "Pendiente");
 
-                                // Convertir fecha a formato adecuado
                                 String fechaFormateada = formatDate(fecha);
 
-                                // Crear la cita y agregarla a la lista (eliminada la descripción)
-                                Cita cita = new Cita(motivo, fechaFormateada, hora, status); // Sin 'descripcion'
+                                Cita cita = new Cita(motivo, fechaFormateada, hora, status);
                                 citasList.add(cita);
                             }
-
-                            // Actualizar el adaptador con las nuevas citas
                             citasAdapter.actualizarCitas(citasList);
                         } else {
-                            Log.d("obtenerCitasUsuario", "No se encontraron citas.");
                             Toast.makeText(this, "No tienes citas agendadas", Toast.LENGTH_SHORT).show();
                         }
-
                     } catch (Exception e) {
                         Log.e("obtenerCitasUsuario", "Error al procesar las citas: ", e);
                     }
@@ -143,20 +125,19 @@ public class interfazusuario extends AppCompatActivity {
         Volley.newRequestQueue(this).add(request);
     }
 
-
-    // Método para formatear la fecha recibida
     private String formatDate(String dateStr) {
         try {
             SimpleDateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
             Date date = iso8601Format.parse(dateStr);
             SimpleDateFormat simpleFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
             return simpleFormat.format(date);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             Log.e("formatDate", "Error al formatear la fecha", e);
-            return dateStr; // Devolver la fecha original si ocurre un error
+            return dateStr;
         }
     }
 }
+
 
 
 
