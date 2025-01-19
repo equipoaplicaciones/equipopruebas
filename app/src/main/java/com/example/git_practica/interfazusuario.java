@@ -81,6 +81,15 @@ public class interfazusuario extends AppCompatActivity {
             }
         };
         LocalBroadcastManager.getInstance(this).registerReceiver(citaReceiver, new IntentFilter("CITA_AGREGADA"));
+
+        // Añade esto en el onCreate() de interfazusuario
+        ImageButton btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
+        btnCerrarSesion.setOnClickListener(v -> {
+            Intent intent = new Intent(interfazusuario.this, MainActivity.class);
+            startActivity(intent);
+            finish(); // Finaliza la actividad actual para evitar volver con el botón de retroceso
+        });
+
     }
 
     @Override

@@ -50,4 +50,5 @@
         app:icon="@drawable/ic_logout"
         app:iconPadding="8dp"
         app:iconGravity="textStart"/>
+
 </LinearLayout>

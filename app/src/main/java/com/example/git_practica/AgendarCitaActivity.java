@@ -107,7 +107,6 @@ public class AgendarCitaActivity extends AppCompatActivity {
                 return;
             }
 
-            //String url = "http://10.0.2.2:5001/api/citas/" + userId;
             String url = "http://192.168.100.110:5001/api/citas/" + userId;
 
             // Crear una solicitud JSON con el encabezado de autorización
@@ -119,6 +118,11 @@ public class AgendarCitaActivity extends AppCompatActivity {
                             JSONObject citaObject = response.getJSONObject("cita");
                             String citaId = citaObject.getString("_id");
                             downloadPdf(citaId, token);
+
+                            // Regresar a la actividad InterfazUsuario
+                            Intent intent = new Intent(AgendarCitaActivity.this, interfazusuario.class);
+                            startActivity(intent);
+                            finish(); // Finalizar la actividad actual para que no esté en la pila de actividades
                         } catch (Exception e) {
                             e.printStackTrace();
                             Toast.makeText(AgendarCitaActivity.this, "Error al obtener el ID de la cita", Toast.LENGTH_SHORT).show();
@@ -138,6 +142,7 @@ public class AgendarCitaActivity extends AppCompatActivity {
 
             Volley.newRequestQueue(this).add(request);
         });
+
     }
 
     private void showDatePickerDialog() {
