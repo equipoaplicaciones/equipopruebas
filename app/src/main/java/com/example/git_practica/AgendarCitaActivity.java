@@ -221,6 +221,7 @@ public class AgendarCitaActivity extends AppCompatActivity {
             Uri uri = data.getData();
 
             if (uri != null && pdfData != null && pdfData.length > 0) {
+                //Implementación de FILE STREAM
                 try (OutputStream outputStream = getContentResolver().openOutputStream(uri)) {
                     if (outputStream != null) {
                         outputStream.write(pdfData);
